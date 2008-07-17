@@ -8,14 +8,7 @@ class Project(db.Model):
 class ProjectService:
     def get(self, code):
         project = Project.gql("WHERE code = :1", code).get()
-        if project is None:
-            return None
-        project_vo = {
-            'code': project.code,
-            'name': project.name,
-            'created_at': project.created_at,
-        }
-        return project_vo
+        return project
         
     def insert(self, code, name):
         project = Project()
