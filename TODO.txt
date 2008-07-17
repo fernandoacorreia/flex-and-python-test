@@ -1,0 +1,7 @@
+Study:
+* python-rest - http://code.google.com/p/python-rest/
+* Bloog (RESTful design) - http://bloog.billkatz.com/
+* GAE SWF Project - http://gaeswf.appspot.com/
+* http://aralbalkan.com/1307
+* PHP RIA SDK by Adobe - http://code.google.com/p/adobe-php-sdk/
+* Ruby on Rails RIA SDK by Adobe - http://groups.google.com/group/adobe-rubyonrails-ria-sdk
