@@ -28,7 +28,11 @@ def test():
 def insert(code, name):
     gw = RemotingService('http://localhost:8080/')
     service = gw.getService('ProjectService')
-    service.insert(int(code), name)
+    new_project = {
+        "code": int(code),
+        "name": name,
+    }
+    service.insert(new_project)
 
 def get(code):
     gw = RemotingService('http://localhost:8080/')

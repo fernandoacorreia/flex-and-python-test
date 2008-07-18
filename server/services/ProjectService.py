@@ -1,3 +1,4 @@
+import logging
 from google.appengine.ext import db
 
 class Project(db.Model):
@@ -7,14 +8,17 @@ class Project(db.Model):
 
 class ProjectService:
     def get(self, code):
+        logging.debug('get %s' % (code))
         project = Project.gql("WHERE code = :1", code).get()
         return project
         
-    def insert(self, code, name):
-        project = Project()
-        project.code = code
-        project.name = name
-        project.put()
+    def insert(self, project):
+        logging.debug('insert %s' % (project))
+        new_project = Project()
+        new_project.code = int(project.code)
+        new_project.name = project.name
+        new_project.put()
 
     def get_all(self):
+        logging.debug('get_all')
         return Project.all().fetch(1000)

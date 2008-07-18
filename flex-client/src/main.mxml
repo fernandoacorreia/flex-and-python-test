@@ -1,14 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute">
-<mx:RemoteObject id="remoteObj" endpoint="http://localhost:8080/"
-	destination="EchoService"
-	result="resultField.text = event.toString(); outputField.text = event.result.toString();" 
-	fault="resultField.text = event.toString()"/>
-	<mx:Label x="10" y="10" text="Input:"/>
-	<mx:TextInput x="70" y="10" id="inputField"/>
-	<mx:Button x="238" y="10" label="Submit" click="remoteObj.echo_upper(inputField.text)"/>
-	<mx:Label x="10" y="42" text="Output:"/>
-	<mx:TextInput x="70" y="40" width="652" id="outputField" editable="false"/>
-	<mx:Label x="10" y="71" text="Result:"/>
-	<mx:TextArea x="70" y="70" width="652" height="332" id="resultField" editable="false"/>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="onInit()">
+    <mx:Script>
+   	<![CDATA[
+		import flash.net.Responder;
+		import mx.controls.Alert;
+
+   		[Bindable]
+		public var dataProvider:Array;
+
+		[Bindable]
+		public var statusMsg:String;
+
+		public var gateway:NetConnection;
+		
+		public function onInit():void
+   		{
+			statusMsg = "Loading data...";
+   			gateway = new NetConnection();
+   			gateway.connect("http://localhost:8080/");
+			getProjects();
+  		}
+  		
+		public function getProjects():void {
+			gateway.call("ProjectService.get_all", new Responder(getResult, onFault));
+		}
+
+		public function getResult(result:Array):void {
+			dataProvider = result;
+			statusMsg = "Data loaded.";
+		}
+
+		public function submitProject():void {
+			var newProject:Object = new Object();
+			newProject.code = project_code.text;
+			newProject.name = project_name.text;
+			gateway.call("ProjectService.insert", new Responder(null, onFault), newProject);
+			getProjects();
+		}
+
+		public function onFault(info:Object):void {
+			statusMsg = info.toString();
+		}
+   	]]>
+    </mx:Script>
+    
+	<mx:DataGrid id="dgProjects" x="10" y="10" dataProvider="{dataProvider}" width="356" height="183">
+		<mx:columns>
+			<mx:DataGridColumn headerText="Code" dataField="code"/>
+			<mx:DataGridColumn headerText="Name" dataField="name"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Button x="374" y="11" label="Reload" click="onInit()"/>
+	<mx:Label x="10" y="203" text="Created at"/>
+	<mx:TextInput x="103" y="201" id="selected_created_at" text="{dgProjects.selectedItem.created_at}" width="263"/>
+    <mx:Form x="10" y="240" width="356" borderStyle="solid" cornerRadius="2">
+      <mx:FormHeading label="New Project"/>
+      <mx:HBox>
+         <mx:Label text="Code"/>
+         <mx:TextInput id="project_code" width="159"/>
+      </mx:HBox>
+      <mx:HBox>
+         <mx:Label text="Name"/>
+         <mx:TextInput id="project_name"/>
+      </mx:HBox>
+      <mx:Button label="Insert" click="submitProject()"/>
+    </mx:Form>
+	<mx:Label x="10" y="384" text="{statusMsg}" width="356"/>
 </mx:Application>

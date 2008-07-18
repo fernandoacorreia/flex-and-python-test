@@ -1,3 +1,7 @@
+Features:
+* Integrate user authentication on the Flex client and the GAE server.
+* Use the RESTful convention.
+
 Study:
 * python-rest - http://code.google.com/p/python-rest/
 * Bloog (RESTful design) - http://bloog.billkatz.com/
@@ -5,3 +9,6 @@ Study:
 * http://aralbalkan.com/1307
 * PHP RIA SDK by Adobe - http://code.google.com/p/adobe-php-sdk/
 * Ruby on Rails RIA SDK by Adobe - http://groups.google.com/group/adobe-rubyonrails-ria-sdk
+* RubyAMF - http://code.google.com/p/rubyamf/
+* php_ria_sdk_by_adobe_070108\php_ria_sdk_by_adobe\samples\flex\amfphp
+* RubyOnRailsRIASDKbyAdobe\RubyOnRailsRIASDKbyAdobe\samples\flex\flex_ror_sdk_issuetracker\Flex Source\flex_issuetracker
