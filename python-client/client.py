@@ -10,6 +10,8 @@ client.py get 1
     Gets a project with code = 1.
 client.py update 1 "New project name"
     Updates the name on the project with code = 1.
+client.py delete 1 3 7
+    Deletes the projects with codes = 1, 3 and 7.
 client.py all
     Lists all projects.
 """
@@ -55,6 +57,14 @@ def get(code):
     else:
         print_project(project)
 
+def delete(codes):
+    gw = RemotingService('http://localhost:8080/')
+    service = gw.getService('ProjectService')
+    for code in codes:
+        project = service.get(int(code))
+        if project != None:
+            service.delete(project)
+
 def all():
     gw = RemotingService('http://localhost:8080/')
     service = gw.getService('ProjectService')
@@ -78,6 +88,8 @@ def main(args):
         get(args[1])
     elif command == 'update' and len(args) == 3:
         update(args[1], args[2])
+    elif command == 'delete' and len(args) >= 2:
+        delete(args[1:])
     elif command == 'all' and len(args) == 1:
         all()
     else:

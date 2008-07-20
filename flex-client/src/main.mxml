@@ -59,6 +59,11 @@
         	project._key = null;
         	project_code.setFocus();
         }
+        
+        public function DeleteSelectedProjectClicked():void {
+            gateway.call("ProjectService.delete", new Responder(null, onFault), dgProjects.selectedItem);
+            getProjects();
+        }
         ]]>
     </mx:Script>
     
@@ -69,7 +74,8 @@
         </mx:columns>
     </mx:DataGrid>
     <mx:Button x="374" y="11" label="Refresh" click="onInit()"/>
-    <mx:Button x="374" y="41" label="Add new project" click="AddNewProjectClicked()"/>
+    <mx:Button x="374" y="41" label="Delete selected project" click="DeleteSelectedProjectClicked()"/>
+    <mx:Button x="374" y="71" label="Add new project" click="AddNewProjectClicked()"/>
     <mx:HRule x="10" y="201" width="356"/>
     <mx:TextInput id="project_code" width="261" x="105" y="209" text="{project.code}"/>
     <mx:Label text="Code" x="10" y="211"/>

@@ -38,6 +38,11 @@ class ProjectService:
         else:
             return self.insert(project)
 
+    def delete(self, project):
+        logging.debug('delete %s' % (project))
+        existing_project = Project.get(project._key)
+        existing_project.delete()
+
     def get_all(self):
         logging.debug('get_all')
         return Project.all().fetch(1000)
