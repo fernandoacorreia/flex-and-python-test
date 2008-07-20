@@ -8,10 +8,13 @@ client.py insert 1 "Project name"
     Inserts a new project with code = 1 and name = "Project name".
 client.py get 1
     Gets a project with code = 1.
+client.py update 1 "New project name"
+    Updates the name on the project with code = 1.
 client.py all
     Lists all projects.
 """
 
+from pprint import pprint
 import sys
 from pyamf.remoting.client import RemotingService
 
@@ -32,7 +35,16 @@ def insert(code, name):
         "code": int(code),
         "name": name,
     }
-    service.insert(new_project)
+    project = service.save(new_project)
+    print_project(project)
+
+def update(code, name):
+    gw = RemotingService('http://localhost:8080/')
+    service = gw.getService('ProjectService')
+    project = service.get(int(code))
+    project.name = name
+    project = service.save(project)
+    print_project(project)
 
 def get(code):
     gw = RemotingService('http://localhost:8080/')
@@ -51,7 +63,7 @@ def all():
         print_project(project)
         
 def print_project(project):
-    print "Project code = %s, name = %s, created at %s" % (project.code, project.name, project.created_at)
+    pprint(project)
 
 def main(args):
     if len(args) == 0:
@@ -64,6 +76,8 @@ def main(args):
         insert(args[1], args[2])
     elif command == 'get' and len(args) == 2:
         get(args[1])
+    elif command == 'update' and len(args) == 3:
+        update(args[1], args[2])
     elif command == 'all' and len(args) == 1:
         all()
     else:

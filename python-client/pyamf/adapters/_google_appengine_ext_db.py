@@ -27,10 +27,7 @@ def writeObjectAMF0(self, obj, *args, **kwargs):
         remove = True
         self.context.class_aliases[obj.__class__] = pyamf.ClassAlias(obj.__class__, None)
 
-    self.writeObject(obj, *args, **kwargs)
-
-    if remove:
-        self.context.class_aliases[obj.__class__] = None
+    writeObjectAMF(self, obj, args, kwargs, remove)
 
 def writeObjectAMF3(self, obj, *args, **kwargs):
     try:
@@ -45,8 +42,18 @@ def writeObjectAMF3(self, obj, *args, **kwargs):
             alias = pyamf.ClassAlias(obj.__class__, None)
             self.context.class_aliases[obj.__class__] = alias
 
-    self.writeObject(obj, *args, **kwargs)
+    writeObjectAMF(self, obj, args, kwargs, remove)
 
+def writeObjectAMF(self, obj, args, kwargs, remove):
+    """
+    Writes an object that has already been prepared by writeObjectAMF0 or writeObjectAMF3.
+    """
+    try:
+        obj._key = str(obj.key())
+    except:
+        obj._key = None
+    self.writeObject(obj, *args, **kwargs)
+    del obj._key
     if remove:
         self.context.class_aliases[obj.__class__] = None
 
@@ -54,13 +61,13 @@ def get_attrs_for_model(obj):
     """
     Returns a list of properties on an C{db.Model} instance.
     """
-    return list(obj.__class__._properties)
+    return list(obj.__class__._properties) + ['_key']
 
 def get_attrs_for_expando(obj):
     """
     Returns a list of dynamic properties on a C{db.Expando} instance.
     """
-    return obj.dynamic_properties()
+    return obj.dynamic_properties() + ['_key']
 
 pyamf.register_class(db.Model, attr_func=get_attrs_for_model, metadata=['dynamic'])
 pyamf.register_class(db.Expando, attr_func=get_attrs_for_expando, metadata=['dynamic'])

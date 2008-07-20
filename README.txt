@@ -12,7 +12,7 @@ much about server administration.
 PREREQUISITES
 
 * Google App Engine
-* Flex Builder or Flex SDK
+* Flex Builder 3 or Flex SDK
 * Python 2.5
 
 INSTRUCTIONS

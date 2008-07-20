@@ -1,4 +1,6 @@
 Features:
+* Support delete operation.
+* Make a better use of objects on the Flex side.
 * Integrate user authentication on the Flex client and the GAE server.
 * Use the RESTful convention.
 
