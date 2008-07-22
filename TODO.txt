@@ -1,8 +1,10 @@
 Features:
+* Use RemoteObject - http://pyamf.org/wiki/RemoteObjectConfig
 * Optimistic concurrency control.
 * Make a better use of objects on the Flex side.
-* Integrate user authentication on the Flex client and the GAE server.
+* Integrate user authentication on the Flex client and the GAE server - http://pyamf.org/browser/examples/trunk/authentication/Readme.txt
 * Use the RESTful convention.
+* Use the Cairngorm framework.
 
 Study:
 * python-rest - http://code.google.com/p/python-rest/
