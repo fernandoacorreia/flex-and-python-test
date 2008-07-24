@@ -18,10 +18,11 @@ PREREQUISITES
 INSTRUCTIONS
 
 1. Start the server:
+On a Windows environment, run start-server.cmd. Or do this:
 cd server
 dev_appserver.py --debug --address=localhost --port=8080 .
 
-2. Execute the Python client test:
+2. Execute the Python client to see its help message:
 cd python-client
 python client.py
 
