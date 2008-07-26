@@ -11,7 +11,7 @@ package flexclient.controller
         {
             var result:Boolean = notification.getBody() as Boolean;
             if (result == false) {
-                Alert.show('Could not add the participant to the project.','Add Project Participant');
+                Alert.show('Could not add the participant to the project.', 'Add Project Participant');
             }
         }
     }

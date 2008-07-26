@@ -1,15 +1,16 @@
 package flexclient.view
 {
     import flash.events.Event;
+    
+    import flexclient.ApplicationFacade;
+    import flexclient.model.ProjectProxy;
+    import flexclient.model.enum.DepartmentsEnum;
+    import flexclient.model.vo.ProjectVO;
+    import flexclient.view.components.ProjectForm;
+    
     import org.puremvc.as3.interfaces.IMediator;
     import org.puremvc.as3.interfaces.INotification;
     import org.puremvc.as3.patterns.mediator.Mediator;
-    import org.puremvc.as3.patterns.observer.Notification;    
-    import flexclient.ApplicationFacade;
-    import flexclient.model.vo.ProjectVO;
-    import flexclient.model.ProjectProxy;
-    import flexclient.model.enum.DepartmentsEnum;
-    import flexclient.view.components.ProjectForm;
 
     public class ProjectFormMediator extends Mediator implements IMediator
     {
@@ -81,7 +82,7 @@ package flexclient.view
                     projectForm.project = note.getBody() as ProjectVO;
                     projectForm.mode = ProjectForm.MODE_EDIT;
                     projectForm.project_name.setFocus();
-                    break;                    
+                    break;
             }
         }
         

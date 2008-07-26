@@ -67,7 +67,7 @@ package flexclient.view
                     
                 case ApplicationFacade.PROJECT_ADDED:
                     participantsPanel.project = note.getBody() as ProjectVO;
-                    var participantVO:ParticipantVO = new ParticipantVO(participantsPanel.project.code);
+                    var participantVO:ParticipantVO = new ParticipantVO(participantsPanel.project._key);
                     participantProxy.addItem(participantVO);
                     clearForm();
                     break;
@@ -86,14 +86,14 @@ package flexclient.view
                     
                 case ApplicationFacade.PROJECT_SELECTED:
                     participantsPanel.project = note.getBody() as ProjectVO;
-                    participantsPanel.projectParticipants = participantProxy.getProjectParticipants(participantsPanel.project.code);
+                    participantsPanel.projectParticipants = participantProxy.getProjectParticipants(participantsPanel.project._key);
                     participantsPanel.participantCombo.selectedItem = ParticipantsEnum.NONE_SELECTED;
                     break;
                     
                 case ApplicationFacade.PARTICIPANT_ADDED_TO_PROJECT:
                     participantsPanel.projectParticipants = null;
-                    participantsPanel.projectParticipants = participantProxy.getProjectParticipants(participantsPanel.project.code);
-                    break;                    
+                    participantsPanel.projectParticipants = participantProxy.getProjectParticipants(participantsPanel.project._key);
+                    break;
             }
         }
         

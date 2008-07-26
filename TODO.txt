@@ -1,8 +1,5 @@
 Features:
-* Use the PureMVC framework.
 * Make a better use of objects on the Flex side.
-* Set focus to the form when adding a new project (inter-view event).
-* Avoid duplicating the getProjects() function.
 * Use RemoteObject - http://pyamf.org/wiki/RemoteObjectConfig
 * Optimistic concurrency control.
 * Integrate user authentication on the Flex client and the GAE server - http://pyamf.org/browser/examples/trunk/authentication/Readme.txt

@@ -27,9 +27,9 @@
             // Submits the add or update.
             private function submit():void
             {
-                project = new ProjectVO(int(code.text),
-                                        project_name.text,
-                                        department.selectedItem as DepartmentsEnum);
+                project.code = int(code.text);
+                project.name = project_name.text;
+                project.department = (department.selectedItem as DepartmentsEnum).ordinal;
                 if (project.isValid) {
                     if (mode == MODE_ADD) {
                         dispatchEvent(new Event(ADD));
@@ -70,8 +70,8 @@
         <!-- Department Combo -->
         <mx:FormItem label="Department" required="true">
             <mx:ComboBox id="department" labelField="value" rowCount="6"
-                selectedIndex="{project.department.ordinal+1}"
-                dataProvider="{DepartmentsEnum.comboList}"
+                selectedIndex="{project.department}"
+                dataProvider="{DepartmentsEnum.list}"
                 enabled="{project != null}" />
         </mx:FormItem>
 

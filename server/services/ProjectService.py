@@ -7,6 +7,7 @@ from google.appengine.ext import db
 class Project(db.Model):
     code = db.IntegerProperty()
     name = db.StringProperty()
+    department = db.IntegerProperty(default=0)
     created_at = db.DateTimeProperty(auto_now_add=True)
     modified_at = db.DateTimeProperty(auto_now=True)
 
@@ -21,6 +22,7 @@ class ProjectService:
         new_project = Project()
         new_project.code = int(project.code)
         new_project.name = project.name
+        new_project.department = int(project.department)
         new_project.put()
         return new_project
 
@@ -28,6 +30,7 @@ class ProjectService:
         logging.debug('udpate %s' % (project))
         existing_project = Project.get(project._key)
         existing_project.name = project.name
+        existing_project.department = int(project.department)
         existing_project.put()
         return Project.get(project._key)
 

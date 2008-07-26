@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Panel title="Project Participants" status="{project.givenName}"
+<mx:Panel title="Project Participants" status="{project.name}"
           xmlns:mx="http://www.adobe.com/2006/mxml" height="200">
 
     <!-- Events dispatched by this View Component -->
@@ -53,7 +53,7 @@
 
         <!-- Participant to Add -->
         <mx:ComboBox id="participantCombo" labelField="value" enabled="{project != null}"
-            dataProvider="{ParticipantsEnum.comboList}" change="selectParticipantToAdd()"/>
+            dataProvider="{ParticipantsEnum.list}" change="selectParticipantToAdd()"/>
 
         <!-- Add Participant Button -->
         <mx:Button label="Add" click="sendEvent(ADD)"

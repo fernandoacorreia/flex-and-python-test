@@ -12,6 +12,8 @@ client.py update 1 "New project name"
     Updates the name on the project with code = 1.
 client.py delete 1 3 7
     Deletes the projects with codes = 1, 3 and 7.
+client.py initialize
+    Deletes all current data and inserts sample objects.
 client.py all
     Lists all projects.
 """
@@ -36,6 +38,7 @@ def insert(code, name):
     new_project = {
         "code": int(code),
         "name": name,
+        "department": 0,
     }
     project = service.save(new_project)
     print_project(project)
@@ -65,6 +68,19 @@ def delete(codes):
         if project != None:
             service.delete(project)
 
+def initialize():
+    gw = RemotingService('http://localhost:8080/')
+    service = gw.getService('ProjectService')
+    projects = service.get_all()
+    for project in projects:
+        service.delete(project)
+    sample_projects = [ {"code": 104, "name": "Foobar 2008", "department": 1,},
+                        {"code": 201, "name": "Server consolidation", "department": 3,},
+                        {"code": 207, "name": "Flex training", "department": 2,},
+                        {"code": 321, "name": "Desktop purchase", "department": 5,} ]
+    for project in sample_projects:
+        service.save(project)
+
 def all():
     gw = RemotingService('http://localhost:8080/')
     service = gw.getService('ProjectService')
@@ -90,6 +106,8 @@ def main(args):
         update(args[1], args[2])
     elif command == 'delete' and len(args) >= 2:
         delete(args[1:])
+    elif command == 'initialize' and len(args) == 1:
+        initialize()
     elif command == 'all' and len(args) == 1:
         all()
     else:

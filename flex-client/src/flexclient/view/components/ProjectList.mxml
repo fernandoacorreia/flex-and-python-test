@@ -13,6 +13,7 @@
         <![CDATA[
             import mx.collections.ArrayCollection;
             import mx.controls.dataGridClasses.DataGridColumn;
+            import flexclient.model.enum.DepartmentsEnum;
             import flexclient.model.vo.ProjectVO;
 
             public static const NEW:String    = 'new';
@@ -40,7 +41,7 @@
             // Displays department in datagrid.
             private function deptLabel(item:Object, dc:DataGridColumn):String
             {
-                return item.department.value;
+                return DepartmentsEnum.list[item.department].value;
             }
         ]]>
     </mx:Script>

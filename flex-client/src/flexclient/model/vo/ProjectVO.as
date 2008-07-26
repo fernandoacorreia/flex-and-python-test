@@ -6,27 +6,27 @@ package flexclient.model.vo
     [Bindable]
     public class ProjectVO
     {
-        public var code:int = 0;
-        public var name:String = '';
-        public var department:DepartmentsEnum = DepartmentsEnum.NONE_SELECTED;
-
-        public function ProjectVO(code:int = 0,
-                                  name:String = null,
-                                  department:DepartmentsEnum = null)
-        {
-            if(code != 0) this.code = code;
-            if(name != null) this.name = name;
-            if(department != null) this.department = department;
-        }
+    	public var _key:String;
+        public var code:int;
+        public var name:String;
+        public var created_at:Date;
+        public var modified_at:Date;
+        public var department:int;
         
+        public function ProjectVO(dto:Object = null)
+        {
+        	if (dto == null) return;
+			_key = dto._key;
+			code = dto.code;
+			name = dto.name;
+			created_at = dto.created_at;
+			modified_at = dto.modified_at;
+			department = dto.department;
+        }
+
         public function get isValid():Boolean
         {
-            return code != 0 && name != '' && department != DepartmentsEnum.NONE_SELECTED;
-        }
-        
-        public function get givenName():String
-        {
-            return this.name;
+            return code != 0 && name != '' && department != 0;
         }
     }
 }

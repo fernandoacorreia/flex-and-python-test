@@ -42,13 +42,13 @@ package flexclient.view
         private function onDelete(event:Event):void
         {
             sendNotification(ApplicationFacade.DELETE_PROJECT,
-                              projectList.selectedProject);
+                             projectList.selectedProject);
         }
         
         private function onSelect(event:Event):void
         {
             sendNotification(ApplicationFacade.PROJECT_SELECTED,
-                              projectList.selectedProject);
+                             projectList.selectedProject);
         }
 
         override public function listNotificationInterests():Array

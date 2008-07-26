@@ -5,12 +5,12 @@ package flexclient.model.vo
     [Bindable]
     public class ParticipantVO
     {
-        public var projectCode:int = 0;
-        public var participants:ArrayCollection = new ArrayCollection();        
+        public var projectKey:String;
+        public var participants:ArrayCollection = new ArrayCollection();
 
-        public function ParticipantVO(projectCode:int = 0, participants:Array = null)
+        public function ParticipantVO(projectKey:String, participants:Array = null)
         {
-            if(projectCode != 0) this.projectCode = projectCode;
+            this.projectKey = projectKey;
             if(participants != null) this.participants = new ArrayCollection(participants);
         } 
     }

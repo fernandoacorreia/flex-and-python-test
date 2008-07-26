@@ -16,16 +16,6 @@ package flexclient.model
         public function ParticipantProxy()
         {
             super(NAME, new ArrayCollection);            
-            // generate some test data 
-            addItem(new ParticipantVO(100, [ ParticipantsEnum.BREANNA_GALLASIN,
-                                             ParticipantsEnum.JERAN_CORSE ]));
-            addItem(new ParticipantVO(201, [ ParticipantsEnum.FYRA_GINN,
-                                             ParticipantsEnum.JERAN_CORSE,
-                                             ParticipantsEnum.MILKA_PRAXON ]))
-            addItem(new ParticipantVO(300, [ ParticipantsEnum.BREANNA_GALLASIN,
-                                             ParticipantsEnum.KEN_GUNDO,
-                                             ParticipantsEnum.ULDIR_GREETA,
-                                             ParticipantsEnum.ZARLI_ORDEN ]));
         }
         
         // Gets the data property cast to the appropriate type.
@@ -43,46 +33,35 @@ package flexclient.model
         // Deletes an item from the data.
         public function deleteItem(item:Object):void
         {
-            for (var i:int = 0; i<participants.length; i++) { 
-                if (participants.getItemAt(i).projectCode == item.code) {
+            for (var i:int = 0; i < participants.length; i++) { 
+                if (participants.getItemAt(i).projectKey == item._key) {
                     participants.removeItemAt(i);
                     break;
                 }
             }
         }
-        
+
         // Determines if the project has a given participant.
         public function doesProjectHaveParticipant(project:ProjectVO, participant:ParticipantsEnum):Boolean
         {
+        	var projectParticipants:ArrayCollection = getProjectParticipants(project._key);
             var hasParticipant:Boolean = false;
-            for (var i:int = 0; i<participants.length; i++) { 
-                if (participants.getItemAt(i).projectCode == project.code) {
-                    var projectParticipants:ArrayCollection = participants.getItemAt(i).participants as ArrayCollection;
-                    for (var j:int = 0; j<projectParticipants.length; j++) {
-                        if (ParticipantsEnum(projectParticipants.getItemAt(j)).equals(participant)) {
-                            hasParticipant = true;
-                            break;
-                        } 
-                    }
-                    break;
+            for (var i:int = 0; i < projectParticipants.length; i++) {
+                if (ParticipantsEnum(projectParticipants.getItemAt(i)).equals(participant)) {
+                    return true;
                 }
             }
-            return hasParticipant;
+            return false;
         }
 
         // Adds a participant to a project.
         public function addParticipantToProject(project:ProjectVO, participant:ParticipantsEnum) : void
         {
             var result:Boolean = false;
-            if (! doesProjectHaveParticipant(project, participant)) {
-                for (var i:int = 0; i<participants.length; i++) { 
-                    if (participants.getItemAt(i).projectCode == project.code) {
-                        var projectParticipants:ArrayCollection = participants.getItemAt(i).participants as ArrayCollection;
-                        projectParticipants.addItem(participant);
-                        result = true;
-                        break;
-                    }
-                }
+            if (!doesProjectHaveParticipant(project, participant)) {
+	        	var projectParticipants:ArrayCollection = getProjectParticipants(project._key);
+				projectParticipants.addItem(participant);
+                result = true;
             }
             sendNotification(ApplicationFacade.PARTICIPANT_ADDED_TO_PROJECT, result);
         }
@@ -91,15 +70,10 @@ package flexclient.model
         public function removeParticipantFromProject(project:ProjectVO, participant:ParticipantsEnum) : void
         {
             if (doesProjectHaveParticipant(project, participant)) {
-                for (var i:int = 0; i<participants.length; i++) { 
-                    if (participants.getItemAt(i).projectCode == project.code) {
-                        var projectParticipants:ArrayCollection = participants.getItemAt(i).participants as ArrayCollection;
-                        for (var j:int = 0; j<projectParticipants.length; j++) { 
-                            if (ParticipantsEnum(projectParticipants.getItemAt(j)).equals(participant)) {
-                                projectParticipants.removeItemAt(j);
-                                break;
-                            }
-                        }
+	        	var projectParticipants:ArrayCollection = getProjectParticipants(project._key);
+                for (var i:int = 0; i < projectParticipants.length; i++) { 
+                    if (ParticipantsEnum(projectParticipants.getItemAt(i)).equals(participant)) {
+                        projectParticipants.removeItemAt(i);
                         break;
                     }
                 }
@@ -107,16 +81,17 @@ package flexclient.model
         }
 
         // Gets a project's participants.
-        public function getProjectParticipants(code:int):ArrayCollection
+        public function getProjectParticipants(key:String):ArrayCollection
         {
-            var projectParticipants:ArrayCollection = new ArrayCollection();
-            for (var i:int = 0; i<participants.length; i++) { 
-                if (participants.getItemAt(i).projectCode == code) {
-                    projectParticipants = participants.getItemAt(i).participants as ArrayCollection;
-                    break;
+            for (var i:int = 0; i < participants.length; i++) {
+                if (participants.getItemAt(i).projectKey == key) {
+                    return participants.getItemAt(i).participants as ArrayCollection;
                 }
             }
-            return projectParticipants;
+            // there is no list of participants for the project, so create one
+            var newParticipantVO:ParticipantVO = new ParticipantVO(key);
+            participants.addItem(newParticipantVO);
+            return newParticipantVO.participants as ArrayCollection;
         }
     }
 }
