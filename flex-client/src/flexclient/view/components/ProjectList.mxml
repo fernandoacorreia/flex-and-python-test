@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel title="Projects" status="{projects.length}"
+          xmlns:mx="http://www.adobe.com/2006/mxml">
+
+    <!-- Events dispatched by this View Component -->
+    <mx:Metadata>
+        [Event('new')]
+        [Event('delete')]
+        [Event('select')]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+            import mx.collections.ArrayCollection;
+            import mx.controls.dataGridClasses.DataGridColumn;
+            import flexclient.model.vo.ProjectVO;
+
+            public static const NEW:String    = 'new';
+            public static const DELETE:String = 'delete';
+            public static const SELECT:String = 'select';
+
+            [Bindable] public var selectedProject:ProjectVO;
+            [Bindable] public var projects:ArrayCollection;
+            [Bindable] private var armed:Boolean = false; // delete confirmation
+
+            // Sends the named event and resets armed state.
+            private function sendEvent(eventName:String):void
+            {
+                armed=false;
+                dispatchEvent(new Event(eventName, true));
+            }
+
+            // Removes selection in the project list and resets armed state.
+            public function deSelect():void
+            {
+                armed=false;
+                projectDataGrid.selectedIndex = -1;
+            }
+
+            // Displays department in datagrid.
+            private function deptLabel(item:Object, dc:DataGridColumn):String
+            {
+                return item.department.value;
+            }
+        ]]>
+    </mx:Script>
+
+    <!-- The selectedProject property is bound to Selection in the data grid  -->
+    <mx:Binding source="projectDataGrid.selectedItem as ProjectVO" destination="selectedProject"/>
+
+    <!-- The Project List -->
+    <mx:DataGrid id="projectDataGrid" dataProvider="{projects}" width="100%"
+    	rowCount="5"
+        click="if (projectDataGrid.selectedIndex != -1) sendEvent(SELECT)">
+        <mx:columns>
+            <mx:DataGridColumn width="75" dataField="code" headerText="Code"/>
+            <mx:DataGridColumn width="250" dataField="name" headerText="Name"/>
+            <mx:DataGridColumn dataField="department" labelFunction="deptLabel" headerText="Department"/>
+        </mx:columns>
+    </mx:DataGrid>
+
+    <!-- Project Maintenance Controls -->
+    <mx:ControlBar horizontalAlign="right">		
+        <!-- Delete Confirmation -->
+        <mx:HBox id="deleteArmed" visible="{armed}" verticalAlign="middle">
+            <mx:Label text="Are you sure?"/>
+            <mx:LinkBar itemClick="(event.item == 'Yes') ? sendEvent(DELETE) : armed=false">
+                <mx:dataProvider>
+                    <mx:String>Yes</mx:String>
+                    <mx:String>No</mx:String>
+                </mx:dataProvider>
+            </mx:LinkBar>
+        </mx:HBox>
+
+        <!-- Delete Project Button -->
+        <mx:Button label="Delete" click="armed=true" enabled="{projectDataGrid.selectedIndex != -1}" />
+
+        <!-- New Project Button -->
+        <mx:Button label="New" click="deSelect();sendEvent(NEW)" />
+    </mx:ControlBar>
+
+</mx:Panel>

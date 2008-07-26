@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="horizontal"
+    xmlns:view="flexclient.view.components.*"
+    creationComplete="facade.startup(this)"	>
+
+    <mx:Script>
+        <![CDATA[
+            import flexclient.ApplicationFacade;
+            private var facade:ApplicationFacade = ApplicationFacade.getInstance();
+        ]]>
+    </mx:Script>
+
+    <!-- Project Management Interface -->
+    <mx:VBox>
+        <mx:Image source="flexclient/view/assets/banner.png"/>
+        <view:ProjectList id="projectList" width="100%" />
+        <mx:HBox>
+            <view:ProjectForm id="projectForm"/>
+            <view:ParticipantsPanel id="participantsPanel" height="100%"/>
+        </mx:HBox>
+    </mx:VBox>
+
+</mx:Application>

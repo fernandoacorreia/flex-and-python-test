@@ -1,0 +1,122 @@
+package flexclient.model
+{
+    import mx.collections.ArrayCollection;
+    import org.puremvc.as3.interfaces.IProxy;
+    import org.puremvc.as3.patterns.proxy.Proxy;
+    import org.puremvc.as3.patterns.observer.Notification;
+    import flexclient.model.vo.ParticipantVO;
+    import flexclient.model.vo.ProjectVO;
+    import flexclient.model.enum.ParticipantsEnum;
+    import flexclient.ApplicationFacade;
+
+    public class ParticipantProxy extends Proxy implements IProxy
+    {
+        public static const NAME:String = 'ParticipantProxy';
+
+        public function ParticipantProxy()
+        {
+            super(NAME, new ArrayCollection);            
+            // generate some test data 
+            addItem(new ParticipantVO(100, [ ParticipantsEnum.BREANNA_GALLASIN,
+                                             ParticipantsEnum.JERAN_CORSE ]));
+            addItem(new ParticipantVO(201, [ ParticipantsEnum.FYRA_GINN,
+                                             ParticipantsEnum.JERAN_CORSE,
+                                             ParticipantsEnum.MILKA_PRAXON ]))
+            addItem(new ParticipantVO(300, [ ParticipantsEnum.BREANNA_GALLASIN,
+                                             ParticipantsEnum.KEN_GUNDO,
+                                             ParticipantsEnum.ULDIR_GREETA,
+                                             ParticipantsEnum.ZARLI_ORDEN ]));
+        }
+        
+        // Gets the data property cast to the appropriate type.
+        public function get participants():ArrayCollection
+        {
+            return data as ArrayCollection;
+        }
+
+        // Adds an item to the data.
+        public function addItem(item:Object):void
+        {
+            participants.addItem(item);
+        }
+        
+        // Deletes an item from the data.
+        public function deleteItem(item:Object):void
+        {
+            for (var i:int = 0; i<participants.length; i++) { 
+                if (participants.getItemAt(i).projectCode == item.code) {
+                    participants.removeItemAt(i);
+                    break;
+                }
+            }
+        }
+        
+        // Determines if the project has a given participant.
+        public function doesProjectHaveParticipant(project:ProjectVO, participant:ParticipantsEnum):Boolean
+        {
+            var hasParticipant:Boolean = false;
+            for (var i:int = 0; i<participants.length; i++) { 
+                if (participants.getItemAt(i).projectCode == project.code) {
+                    var projectParticipants:ArrayCollection = participants.getItemAt(i).participants as ArrayCollection;
+                    for (var j:int = 0; j<projectParticipants.length; j++) {
+                        if (ParticipantsEnum(projectParticipants.getItemAt(j)).equals(participant)) {
+                            hasParticipant = true;
+                            break;
+                        } 
+                    }
+                    break;
+                }
+            }
+            return hasParticipant;
+        }
+
+        // Adds a participant to a project.
+        public function addParticipantToProject(project:ProjectVO, participant:ParticipantsEnum) : void
+        {
+            var result:Boolean = false;
+            if (! doesProjectHaveParticipant(project, participant)) {
+                for (var i:int = 0; i<participants.length; i++) { 
+                    if (participants.getItemAt(i).projectCode == project.code) {
+                        var projectParticipants:ArrayCollection = participants.getItemAt(i).participants as ArrayCollection;
+                        projectParticipants.addItem(participant);
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            sendNotification(ApplicationFacade.PARTICIPANT_ADDED_TO_PROJECT, result);
+        }
+
+        // Removes a participant from a project.
+        public function removeParticipantFromProject(project:ProjectVO, participant:ParticipantsEnum) : void
+        {
+            if (doesProjectHaveParticipant(project, participant)) {
+                for (var i:int = 0; i<participants.length; i++) { 
+                    if (participants.getItemAt(i).projectCode == project.code) {
+                        var projectParticipants:ArrayCollection = participants.getItemAt(i).participants as ArrayCollection;
+                        for (var j:int = 0; j<projectParticipants.length; j++) { 
+                            if (ParticipantsEnum(projectParticipants.getItemAt(j)).equals(participant)) {
+                                projectParticipants.removeItemAt(j);
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Gets a project's participants.
+        public function getProjectParticipants(code:int):ArrayCollection
+        {
+            var projectParticipants:ArrayCollection = new ArrayCollection();
+            for (var i:int = 0; i<participants.length; i++) { 
+                if (participants.getItemAt(i).projectCode == code) {
+                    projectParticipants = participants.getItemAt(i).participants as ArrayCollection;
+                    break;
+                }
+            }
+            return projectParticipants;
+        }
+    }
+}

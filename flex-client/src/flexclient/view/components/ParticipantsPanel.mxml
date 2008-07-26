@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel title="Project Participants" status="{project.givenName}"
+          xmlns:mx="http://www.adobe.com/2006/mxml" height="200">
+
+    <!-- Events dispatched by this View Component -->
+    <mx:Metadata>
+        [Event('add')]
+        [Event('remove')]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+            import mx.collections.ArrayCollection;
+            import flexclient.model.vo.ProjectVO;
+            import flexclient.model.enum.ParticipantsEnum;
+
+            public static const ADD:String = 'add';
+            public static const REMOVE:String = 'remove';
+
+            [Bindable] public var project:ProjectVO;
+            [Bindable] public var selectedParticipant:ParticipantsEnum;
+            [Bindable] public var projectParticipants:ArrayCollection;
+
+            // Send the named event.
+            private function sendEvent(eventName:String):void
+            {
+                dispatchEvent(new Event(eventName, true));
+            }
+
+            // Selects participant to remove.
+            private function selectParticipantToRemove():void
+            {
+                participantCombo.selectedItem = ParticipantsEnum.NONE_SELECTED;
+                selectedParticipant=participantList.selectedItem as ParticipantsEnum;
+            }
+
+            // Selects participant to add.
+            private function selectParticipantToAdd():void
+            {
+                participantList.selectedIndex = -1;
+                selectedParticipant=participantCombo.selectedItem as ParticipantsEnum;
+            }
+        ]]>
+    </mx:Script>
+
+    <!-- Project's Participants -->
+    <mx:List id="participantList" width="100%" height="100%" labelField="value"
+    	rowCount="5"
+        dataProvider="{projectParticipants}" change="selectParticipantToRemove()"/>
+
+    <!-- Participant Maintenance Controls -->
+    <mx:ControlBar>
+
+        <!-- Participant to Add -->
+        <mx:ComboBox id="participantCombo" labelField="value" enabled="{project != null}"
+            dataProvider="{ParticipantsEnum.comboList}" change="selectParticipantToAdd()"/>
+
+        <!-- Add Participant Button -->
+        <mx:Button label="Add" click="sendEvent(ADD)"
+            enabled="{participantCombo.selectedItem != ParticipantsEnum.NONE_SELECTED}"/>
+
+        <!-- Remove Participant Button -->
+        <mx:Button label="Remove" click="sendEvent(REMOVE)"
+            enabled="{participantList.selectedIndex != -1}"/>
+
+    </mx:ControlBar>
+
+</mx:Panel>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel title="Project Details" status="{project.code}"
+    xmlns:mx="http://www.adobe.com/2006/mxml" height="200">
+
+    <!-- Events dispatched by this View Component -->
+    <mx:Metadata>
+        [Event('add')]
+        [Event('update')]
+        [Event('cancel')]
+    </mx:Metadata>
+
+    <mx:Script>
+        <![CDATA[
+            import flexclient.model.vo.ProjectVO;
+            import flexclient.model.enum.DepartmentsEnum;
+
+            public static const ADD:String    = "add";
+            public static const UPDATE:String = "update";
+            public static const CANCEL:String = "cancel";
+
+            public static const MODE_ADD:String  = "modeAdd";
+            public static const MODE_EDIT:String = "modeEdit";
+
+            [Bindable] public var project:ProjectVO;
+            [Bindable] public var mode:String;
+
+            // Submits the add or update.
+            private function submit():void
+            {
+                project = new ProjectVO(int(code.text),
+                                        project_name.text,
+                                        department.selectedItem as DepartmentsEnum);
+                if (project.isValid) {
+                    if (mode == MODE_ADD) {
+                        dispatchEvent(new Event(ADD));
+                    } else {
+                        dispatchEvent(new Event(UPDATE));
+                    }
+                }
+            }
+
+            // Cancels the add or update.
+            private function cancel():void
+            {
+                dispatchEvent(new Event(CANCEL));
+            }
+
+            // Enables submit button if required fields are satisfied.
+            private function enableSubmit(code:int, name:String, dept:DepartmentsEnum):Boolean
+            {
+                return (code != 0 && name != '' && dept != DepartmentsEnum.NONE_SELECTED);
+            }
+        ]]>
+    </mx:Script>
+
+    <!-- Project Profile Form -->
+    <mx:Form xmlns:mx="http://www.adobe.com/2006/mxml"  enabled="{project != null}">
+
+        <!-- Code -->
+        <mx:FormItem label="Code" required="true">
+            <mx:TextInput id="code" enabled="{mode == MODE_ADD}"
+                text="{project.code}" />
+        </mx:FormItem>
+
+        <!-- Name-->
+        <mx:FormItem label="Name" required="true">
+            <mx:TextInput id="project_name" text="{project.name}" />
+        </mx:FormItem>
+
+        <!-- Department Combo -->
+        <mx:FormItem label="Department" required="true">
+            <mx:ComboBox id="department" labelField="value" rowCount="6"
+                selectedIndex="{project.department.ordinal+1}"
+                dataProvider="{DepartmentsEnum.comboList}"
+                enabled="{project != null}" />
+        </mx:FormItem>
+
+    </mx:Form>
+
+    <!-- Project Profile Controls -->
+    <mx:ControlBar horizontalAlign="right">
+
+        <!-- Update/Add Project Button -->
+        <mx:Button id="submitButton" click="submit()"
+                   label="{(mode == MODE_ADD) ? 'Add Project' : 'Update Project'}"
+                   enabled="{enableSubmit(int(code.text), project_name.text, department.selectedItem as DepartmentsEnum)}"/>
+
+        <!-- Cancel Button -->
+        <mx:Button label="Cancel" click="cancel()"
+                   enabled="{project != null}"/>
+
+    </mx:ControlBar>
+
+</mx:Panel>
