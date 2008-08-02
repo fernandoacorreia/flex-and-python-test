@@ -15,7 +15,7 @@ package flexclient.model
         public function ProjectProxy()
         {
             super(NAME, new ArrayCollection);
-            Gateway().call("ProjectService.get_all", new Responder(onGetAllResult));
+            Gateway().call("ProjectsService.get_all", new Responder(onGetAllResult));
         }
         
         // Returns data property cast to proper type.
@@ -43,7 +43,7 @@ package flexclient.model
         // Adds an item to the data.
         public function addItem(item:Object):void
         {
-        	Gateway().call("ProjectService.save", new Responder(onAddItemResult), item);
+        	Gateway().call("ProjectsService.save", new Responder(onAddItemResult), item);
         }
         
         private function onAddItemResult(result:Object):void
@@ -54,7 +54,7 @@ package flexclient.model
         // Updates an item in the data.
         public function updateItem(item:Object):void
         {
-        	Gateway().call("ProjectService.save", new Responder(onUpdateItemResult), item);
+        	Gateway().call("ProjectsService.save", new Responder(onUpdateItemResult), item);
         }
         
         private function onUpdateItemResult(result:Object):void
@@ -73,7 +73,7 @@ package flexclient.model
         public function deleteItem(item:Object):void
         {
             var project:ProjectVO = item as ProjectVO;
-        	Gateway().call("ProjectService.delete", null, project);
+        	Gateway().call("ProjectsService.delete", null, project);
             for (var i:int = 0; i < projects.length; i++)
             {
                 if (projects[i]._key == project._key) {

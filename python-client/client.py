@@ -13,9 +13,11 @@ client.py update 1 "New project name"
 client.py delete 1 3 7
     Deletes the projects with codes = 1, 3 and 7.
 client.py initialize
-    Deletes all current data and inserts sample objects.
+    Deletes all current data and inserts sample projects and participants.
 client.py all
     Lists all projects.
+client.py participants
+    Lists all project participants.
 """
 
 from pprint import pprint
@@ -26,67 +28,96 @@ def usage():
     print __doc__
 
 def test():
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('EchoService')
-    print service.echo('test')
-    print service.echo_upper('test')
-    print service.echo_upper(1)
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('EchoService')
+    print project_service.echo('test')
+    print project_service.echo_upper('test')
+    print project_service.echo_upper(1)
 
 def insert(code, name):
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('ProjectService')
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('ProjectsService')
     new_project = {
         "code": int(code),
         "name": name,
         "department": 0,
     }
-    project = service.save(new_project)
+    project = project_service.save(new_project)
     print_project(project)
 
 def update(code, name):
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('ProjectService')
-    project = service.get(int(code))
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('ProjectsService')
+    project = project_service.get(int(code))
     project.name = name
-    project = service.save(project)
+    project = project_service.save(project)
     print_project(project)
 
 def get(code):
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('ProjectService')
-    project = service.get(int(code))
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('ProjectsService')
+    project = project_service.get(int(code))
     if project == None:
         print "Project %s not found." % (code)
     else:
         print_project(project)
 
 def delete(codes):
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('ProjectService')
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('ProjectsService')
     for code in codes:
-        project = service.get(int(code))
+        project = project_service.get(int(code))
         if project != None:
-            service.delete(project)
+            project_service.delete(project)
 
 def initialize():
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('ProjectService')
-    projects = service.get_all()
+    # prepare service objects
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('ProjectsService')
+    project_participants_service = gateway.getService('ProjectParticipantsService')
+
+    # delete all participants
+    participants = project_participants_service.get_all()
+    for participant in participants:
+        project_participants_service.delete(participant)
+
+    # delete all projects
+    projects = project_service.get_all()
     for project in projects:
-        service.delete(project)
+        project_service.delete(project)
+
+    # insert projects
     sample_projects = [ {"code": 104, "name": "Foobar 2008", "department": 1,},
                         {"code": 201, "name": "Server consolidation", "department": 3,},
                         {"code": 207, "name": "Flex training", "department": 2,},
                         {"code": 321, "name": "Desktop purchase", "department": 5,} ]
     for project in sample_projects:
-        service.save(project)
+        project_service.save(project)
+
+    # insert participants
+    project_201_key = project_service.get(201)._key
+    project_321_key = project_service.get(321)._key
+    sample_participants = [ {"project_key": project_201_key, "name": "First Participant",},
+                            {"project_key": project_201_key, "name": "Second Participant",},
+                            {"project_key": project_201_key, "name": "Third Participant",},
+                            {"project_key": project_321_key, "name": "Fourth Participant",},
+                            {"project_key": project_321_key, "name": "Fifth Participant",} ]
+    for participant in sample_participants:
+        project_participants_service.save(participant)
 
 def all():
-    gw = RemotingService('http://localhost:8080/')
-    service = gw.getService('ProjectService')
-    projects = service.get_all()
+    gateway = RemotingService('http://localhost:8080/')
+    project_service = gateway.getService('ProjectsService')
+    projects = project_service.get_all()
     for project in projects:
         print_project(project)
+
+def participants():        
+    gateway = RemotingService('http://localhost:8080/')
+    project_participants_service = gateway.getService('ProjectParticipantsService')
+    participants = project_participants_service.get_all()
+    for participant in participants:
+        pprint(participant)
         
 def print_project(project):
     pprint(project)
@@ -110,6 +141,8 @@ def main(args):
         initialize()
     elif command == 'all' and len(args) == 1:
         all()
+    elif command == 'participants' and len(args) == 1:
+        participants()
     else:
         usage()
         return 1

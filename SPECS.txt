@@ -1,0 +1,22 @@
+Flex and Python Test Project
+Specification
+
+== PURPOSE ==
+
+This sample represents a very simple project management application. It is an experimental project to explore technical approaches for building a Flex client application integrated to a service running on Google App Engine.
+
+== BUSINES OBJECTS ==
+
+The application maintains a database of projects.
+
+Each project has many participants.
+
+== USE CASES ==
+
+=== Work with projects ===
+
+The application shows a list of projects. The user clicks on a project and the application shows its details. The user can add a new project, change the details of a project or delete a project.
+
+=== Work with project participants ===
+
+When the details of a project are shown, the application shows a list of the project's participants. The user can add new participants to the project or delete participants.

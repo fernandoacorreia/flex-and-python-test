@@ -1,10 +1,11 @@
 import wsgiref.handlers
 from pyamf.remoting.gateway.wsgi import WSGIGateway
-from services import EchoService, ProjectService
+from services import EchoService, ProjectsService, ProjectParticipantsService
 
 services = {
     'EchoService': EchoService.EchoService,
-    'ProjectService': ProjectService.ProjectService,
+    'ProjectsService': ProjectsService.ProjectsService,
+    'ProjectParticipantsService': ProjectParticipantsService.ProjectParticipantsService,
 }
 
 def main():

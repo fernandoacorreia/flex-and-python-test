@@ -3,15 +3,9 @@
 
 import logging
 from google.appengine.ext import db
+from Model import Project
 
-class Project(db.Model):
-    code = db.IntegerProperty()
-    name = db.StringProperty()
-    department = db.IntegerProperty(default=0)
-    created_at = db.DateTimeProperty(auto_now_add=True)
-    modified_at = db.DateTimeProperty(auto_now=True)
-
-class ProjectService:
+class ProjectsService:
     def get(self, code):
         logging.debug('get %s' % (code))
         project = Project.gql("WHERE code = :1", code).get()
