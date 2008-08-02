@@ -1,45 +1,61 @@
-# http://www.nabble.com/Python-Django-Google-App-Engine-De-serialization-Issue-td18221229.html
-# obj_to_gae
-
 import logging
 from google.appengine.ext import db
-from Model import Project
+from Model import Project, DTO
 
 class ProjectsService:
-    def get(self, code):
-        logging.debug('get %s' % (code))
-        project = Project.gql("WHERE code = :1", code).get()
-        return project
+    def get(self, key):
+        logging.debug('get %s' % (key))
+        return self.to_dto(Project.get(key))
+
+    def get_by_code(self, code):
+        logging.debug('get_by_code %s' % (code))
+        return self.to_dto(Project.gql("WHERE code = :1", code).get())
         
-    def insert(self, project):
-        logging.debug('insert %s' % (project))
-        new_project = Project()
-        new_project.code = int(project.code)
-        new_project.name = project.name
-        new_project.department = int(project.department)
-        new_project.put()
-        return new_project
+    def insert(self, project_dto):
+        logging.debug('insert %s' % (project_dto))
+        project = Project()
+        project.code = int(project_dto.code)
+        project.name = project_dto.name
+        project.department = int(project_dto.department)
+        project.put()
+        return self.to_dto(project)
 
-    def update(self, project):
-        logging.debug('udpate %s' % (project))
-        existing_project = Project.get(project._key)
-        existing_project.name = project.name
-        existing_project.department = int(project.department)
-        existing_project.put()
-        return Project.get(project._key)
+    def update(self, project_dto):
+        logging.debug('update %s' % (project_dto))
+        project = Project.get(project_dto._key)
+        project.name = project_dto.name
+        project.department = int(project_dto.department)
+        project.put()
+        return self.to_dto(Project.get(project_dto._key))
 
-    def save(self, project):
-        logging.debug('save %s' % (project))
-        if hasattr(project, '_key') and project._key != None:
-            return self.update(project)
+    def save(self, project_dto):
+        logging.debug('save %s' % (project_dto))
+        if hasattr(project_dto, '_key') and project_dto._key != None:
+            return self.update(project_dto)
         else:
-            return self.insert(project)
+            return self.insert(project_dto)
 
-    def delete(self, project):
-        logging.debug('delete %s' % (project))
-        existing_project = Project.get(project._key)
-        existing_project.delete()
+    def delete(self, project_dto):
+        logging.debug('delete %s' % (project_dto))
+        project = Project.get(project_dto._key)
+        project.delete()
 
     def get_all(self):
         logging.debug('get_all')
-        return Project.all().fetch(1000)
+        projects = Project.all().fetch(1000)
+        projects_dto = []
+        for project in projects:
+            projects_dto.append(self.to_dto(project))
+        return projects_dto
+
+    def to_dto(self, project):
+        if project is None: return None
+        dto = DTO()
+        dto._key = str(project.key())
+        dto._id = project.key().id()
+        dto.code = project.code
+        dto.name = project.name
+        dto.department = project.department
+        dto.created_at = project.created_at
+        dto.modified_at = project.modified_at
+        return dto

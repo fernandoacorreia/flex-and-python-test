@@ -8,16 +8,16 @@ package flexclient.model
 	import org.puremvc.as3.patterns.proxy.Proxy;
 	import flexclient.model.enum.DepartmentsEnum;
 
-    public class ProjectsProxy extends Proxy implements IProxy
+    public class ProjectsProxy extends Proxy
     {
         public static const NAME:String = 'ProjectsProxy';
-        
+
         public function ProjectsProxy()
         {
             super(NAME, new ArrayCollection);
             Gateway().call("ProjectsService.get_all", new Responder(onGetAllResult));
         }
-        
+
         // Returns data property cast to proper type.
         public function get projects():ArrayCollection
         {
@@ -45,18 +45,18 @@ package flexclient.model
         {
         	Gateway().call("ProjectsService.save", new Responder(onAddItemResult), item);
         }
-        
+
         private function onAddItemResult(result:Object):void
         {
             projects.addItem(new Project(result));
         }
-                
+
         // Updates an item in the data.
         public function updateItem(item:Object):void
         {
         	Gateway().call("ProjectsService.save", new Responder(onUpdateItemResult), item);
         }
-        
+
         private function onUpdateItemResult(result:Object):void
         {
             for (var i:int = 0; i < projects.length; i++)
@@ -68,7 +68,7 @@ package flexclient.model
                 }
             }
         }
-                
+
         // Deletes an item in the data.
         public function deleteItem(item:Object):void
         {

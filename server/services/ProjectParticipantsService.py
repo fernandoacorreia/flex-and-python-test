@@ -6,18 +6,17 @@ class ProjectParticipantsService:
     def get(self, key):
         logging.debug('get %s' % (key))
         return self.to_dto(ProjectParticipant.get(key))
-        
+
     def insert(self, participant_dto):
         logging.debug('insert %s' % (participant_dto))
         participant = ProjectParticipant()
         participant.project = Project.get(participant_dto.project_key)
         participant.name = participant_dto.name
         participant.put()
-        logging.debug('after insert %s' % (participant))
         return self.to_dto(participant)
 
     def update(self, participant_dto):
-        logging.debug('udpate %s' % (participant_dto))
+        logging.debug('update %s' % (participant_dto))
         participant = ProjectParticipant.get(participant_dto._key)
         participant.name = participant_dto.name
         participant.put()
@@ -38,14 +37,13 @@ class ProjectParticipantsService:
     def get_all(self):
         logging.debug('get_all')
         participants = ProjectParticipant.all().fetch(1000)
-        logging.debug('participants %s' % (participants))
         participants_dto = []
         for participant in participants:
             participants_dto.append(self.to_dto(participant))
-        logging.debug('participants_dto %s' % (participants_dto))
         return participants_dto
 
     def to_dto(self, participant):
+        if participant is None: return None
         dto = DTO()
         dto._key = str(participant.key())
         dto._id = participant.key().id()

@@ -9,7 +9,7 @@ package flexclient.model
     import flexclient.model.enum.ParticipantsEnum;
     import flexclient.ApplicationFacade;
 
-    public class ParticipantsProxy extends Proxy implements IProxy
+    public class ParticipantsProxy extends Proxy
     {
         public static const NAME:String = 'ParticipantsProxy';
 

@@ -9,9 +9,9 @@ package flexclient.model
     	public var _key:String;
         public var code:int;
         public var name:String;
+        public var department:int;
         public var created_at:Date;
         public var modified_at:Date;
-        public var department:int;
         
         public function Project(dto:Object = null)
         {
@@ -19,9 +19,9 @@ package flexclient.model
 			_key = dto._key;
 			code = dto.code;
 			name = dto.name;
+            department = dto.department;
 			created_at = dto.created_at;
 			modified_at = dto.modified_at;
-			department = dto.department;
         }
 
         public function get isValid():Boolean

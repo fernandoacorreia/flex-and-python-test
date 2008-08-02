@@ -48,7 +48,7 @@ def insert(code, name):
 def update(code, name):
     gateway = RemotingService('http://localhost:8080/')
     project_service = gateway.getService('ProjectsService')
-    project = project_service.get(int(code))
+    project = project_service.get_by_code(int(code))
     project.name = name
     project = project_service.save(project)
     print_project(project)
@@ -56,7 +56,7 @@ def update(code, name):
 def get(code):
     gateway = RemotingService('http://localhost:8080/')
     project_service = gateway.getService('ProjectsService')
-    project = project_service.get(int(code))
+    project = project_service.get_by_code(int(code))
     if project == None:
         print "Project %s not found." % (code)
     else:
@@ -66,7 +66,7 @@ def delete(codes):
     gateway = RemotingService('http://localhost:8080/')
     project_service = gateway.getService('ProjectsService')
     for code in codes:
-        project = project_service.get(int(code))
+        project = project_service.get_by_code(int(code))
         if project != None:
             project_service.delete(project)
 
@@ -95,8 +95,8 @@ def initialize():
         project_service.save(project)
 
     # insert participants
-    project_201_key = project_service.get(201)._key
-    project_321_key = project_service.get(321)._key
+    project_201_key = project_service.get_by_code(201)._key
+    project_321_key = project_service.get_by_code(321)._key
     sample_participants = [ {"project_key": project_201_key, "name": "First Participant",},
                             {"project_key": project_201_key, "name": "Second Participant",},
                             {"project_key": project_201_key, "name": "Third Participant",},
