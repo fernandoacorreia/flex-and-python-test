@@ -14,13 +14,13 @@
             import mx.collections.ArrayCollection;
             import mx.controls.dataGridClasses.DataGridColumn;
             import flexclient.model.enum.DepartmentsEnum;
-            import flexclient.model.vo.ProjectVO;
+            import flexclient.model.Project;
 
             public static const NEW:String    = 'new';
             public static const DELETE:String = 'delete';
             public static const SELECT:String = 'select';
 
-            [Bindable] public var selectedProject:ProjectVO;
+            [Bindable] public var selectedProject:Project;
             [Bindable] public var projects:ArrayCollection;
             [Bindable] private var armed:Boolean = false; // delete confirmation
 
@@ -47,7 +47,7 @@
     </mx:Script>
 
     <!-- The selectedProject property is bound to Selection in the data grid  -->
-    <mx:Binding source="projectDataGrid.selectedItem as ProjectVO" destination="selectedProject"/>
+    <mx:Binding source="projectDataGrid.selectedItem as Project" destination="selectedProject"/>
 
     <!-- The Project List -->
     <mx:DataGrid id="projectDataGrid" dataProvider="{projects}" width="100%"

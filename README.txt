@@ -19,12 +19,12 @@ INSTRUCTIONS
 
 1. Start the server:
 On a Windows environment, run start-server.cmd. Or do this:
-cd server
-dev_appserver.py --debug --address=localhost --port=8080 .
+dev_appserver.py --debug --address=localhost --port=8080 server
 
-2. Execute the Python client to see its help message:
+2. Execute the Python client to see its help message and insert some example records:
 cd python-client
 python client.py
+python client.py initialize
 
 3. Open the Flex client in the Web browser:
 cd flex-client

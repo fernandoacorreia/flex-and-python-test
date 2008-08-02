@@ -3,8 +3,8 @@ package flexclient.controller
     import org.puremvc.as3.interfaces.ICommand;
     import org.puremvc.as3.interfaces.INotification;
     import org.puremvc.as3.patterns.command.SimpleCommand;    
-    import flexclient.model.ProjectProxy;
-    import flexclient.model.ParticipantProxy;
+    import flexclient.model.ProjectsProxy;
+    import flexclient.model.ParticipantsProxy;
     import flexclient.ApplicationFacade;
     import flexclient.view.ProjectFormMediator;
     import flexclient.view.ProjectListMediator;
@@ -20,8 +20,8 @@ package flexclient.controller
          */
         override public function execute(note:INotification) : void
         {
-            facade.registerProxy(new ProjectProxy());
-            facade.registerProxy(new ParticipantProxy());
+            facade.registerProxy(new ProjectsProxy());
+            facade.registerProxy(new ParticipantsProxy());
             var app:FlexClient = note.getBody() as FlexClient;
             facade.registerMediator(new ProjectFormMediator(app.projectForm));
             facade.registerMediator(new ProjectListMediator(app.projectList));

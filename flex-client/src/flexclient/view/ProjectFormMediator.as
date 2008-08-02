@@ -3,9 +3,9 @@ package flexclient.view
     import flash.events.Event;
     
     import flexclient.ApplicationFacade;
-    import flexclient.model.ProjectProxy;
+    import flexclient.model.ProjectsProxy;
     import flexclient.model.enum.DepartmentsEnum;
-    import flexclient.model.vo.ProjectVO;
+    import flexclient.model.Project;
     import flexclient.view.components.ProjectForm;
     
     import org.puremvc.as3.interfaces.IMediator;
@@ -14,7 +14,7 @@ package flexclient.view
 
     public class ProjectFormMediator extends Mediator implements IMediator
     {
-        private var projectProxy:ProjectProxy;
+        private var projectsProxy:ProjectsProxy;
         
         public static const NAME:String = 'ProjectFormMediator';
 
@@ -24,7 +24,7 @@ package flexclient.view
             projectForm.addEventListener(ProjectForm.ADD, onAdd);
             projectForm.addEventListener(ProjectForm.UPDATE, onUpdate);
             projectForm.addEventListener(ProjectForm.CANCEL, onCancel);
-            projectProxy = facade.retrieveProxy(ProjectProxy.NAME) as ProjectProxy;
+            projectsProxy = facade.retrieveProxy(ProjectsProxy.NAME) as ProjectsProxy;
         }
         
         private function get projectForm():ProjectForm
@@ -34,16 +34,16 @@ package flexclient.view
         
         private function onAdd(event:Event):void
         {
-            var project:ProjectVO = projectForm.project;
-            projectProxy.addItem(project);
+            var project:Project = projectForm.project;
+            projectsProxy.addItem(project);
             sendNotification(ApplicationFacade.PROJECT_ADDED, project);
             clearForm();
         }
         
         private function onUpdate(event:Event):void
         {
-            var project:ProjectVO = projectForm.project;
-            projectProxy.updateItem(project);
+            var project:Project = projectForm.project;
+            projectsProxy.updateItem(project);
             sendNotification(ApplicationFacade.PROJECT_UPDATED, project);
             clearForm();
         }
@@ -68,7 +68,7 @@ package flexclient.view
             switch (note.getName())
             {
                 case ApplicationFacade.NEW_PROJECT:
-                    projectForm.project = note.getBody() as ProjectVO;
+                    projectForm.project = note.getBody() as Project;
                     projectForm.mode = ProjectForm.MODE_ADD;
                     projectForm.code.setFocus();
                     break;
@@ -79,7 +79,7 @@ package flexclient.view
                     break;
                     
                 case ApplicationFacade.PROJECT_SELECTED:
-                    projectForm.project = note.getBody() as ProjectVO;
+                    projectForm.project = note.getBody() as Project;
                     projectForm.mode = ProjectForm.MODE_EDIT;
                     projectForm.project_name.setFocus();
                     break;

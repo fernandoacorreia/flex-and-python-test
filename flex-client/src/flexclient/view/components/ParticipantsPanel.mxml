@@ -11,13 +11,13 @@
     <mx:Script>
         <![CDATA[
             import mx.collections.ArrayCollection;
-            import flexclient.model.vo.ProjectVO;
+            import flexclient.model.Project;
             import flexclient.model.enum.ParticipantsEnum;
 
             public static const ADD:String = 'add';
             public static const REMOVE:String = 'remove';
 
-            [Bindable] public var project:ProjectVO;
+            [Bindable] public var project:Project;
             [Bindable] public var selectedParticipant:ParticipantsEnum;
             [Bindable] public var projectParticipants:ArrayCollection;
 

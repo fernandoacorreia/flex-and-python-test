@@ -6,9 +6,9 @@ package flexclient.controller
     import org.puremvc.as3.patterns.command.SimpleCommand;
     import org.puremvc.as3.patterns.observer.Notification;
     import flexclient.ApplicationFacade;
-    import flexclient.model.ProjectProxy;
-    import flexclient.model.ParticipantProxy;
-    import flexclient.model.vo.ProjectVO;
+    import flexclient.model.ProjectsProxy;
+    import flexclient.model.ParticipantsProxy;
+    import flexclient.model.Project;
 
     public class DeleteProjectCommand extends SimpleCommand implements ICommand
     {
@@ -16,11 +16,11 @@ package flexclient.controller
         // Then sends the PROJECT_DELETED notification.
         override public function execute(notification:INotification):void
         {
-            var project:ProjectVO = notification.getBody() as ProjectVO;
-            var projectProxy:ProjectProxy = facade.retrieveProxy(ProjectProxy.NAME) as ProjectProxy;
-            var participantProxy:ParticipantProxy = facade.retrieveProxy(ParticipantProxy.NAME) as ParticipantProxy;
-            projectProxy.deleteItem(project);
-            participantProxy.deleteItem(project);
+            var project:Project = notification.getBody() as Project;
+            var projectsProxy:ProjectsProxy = facade.retrieveProxy(ProjectsProxy.NAME) as ProjectsProxy;
+            var participantsProxy:ParticipantsProxy = facade.retrieveProxy(ParticipantsProxy.NAME) as ParticipantsProxy;
+            projectsProxy.deleteItem(project);
+            participantsProxy.deleteItem(project);
             sendNotification(ApplicationFacade.PROJECT_DELETED);
         }
     }

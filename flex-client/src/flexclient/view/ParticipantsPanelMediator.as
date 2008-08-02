@@ -7,15 +7,15 @@ package flexclient.view
     import org.puremvc.as3.patterns.mediator.Mediator;
     import org.puremvc.as3.patterns.observer.Notification;
     import flexclient.ApplicationFacade;
-    import flexclient.model.vo.ProjectVO;
-    import flexclient.model.ParticipantProxy;
-    import flexclient.model.vo.ParticipantVO;
+    import flexclient.model.Project;
+    import flexclient.model.ParticipantsProxy;
+    import flexclient.model.Participant;
     import flexclient.model.enum.ParticipantsEnum;
     import flexclient.view.components.ParticipantsPanel;
 
     public class ParticipantsPanelMediator extends Mediator implements IMediator
     {
-        private var participantProxy:ParticipantProxy;        
+        private var participantsProxy:ParticipantsProxy;
         
         public static const NAME:String = 'ParticipantPanelMediator';
 
@@ -24,7 +24,7 @@ package flexclient.view
             super(NAME, viewComponent);            
             participantsPanel.addEventListener(ParticipantsPanel.ADD, onAddParticipant);
             participantsPanel.addEventListener(ParticipantsPanel.REMOVE, onRemoveParticipant);
-            participantProxy = facade.retrieveProxy(ParticipantProxy.NAME) as ParticipantProxy;
+            participantsProxy = facade.retrieveProxy(ParticipantsProxy.NAME) as ParticipantsProxy;
                 
         }
         
@@ -35,12 +35,12 @@ package flexclient.view
         
         private function onAddParticipant(event:Event):void
         {
-            participantProxy.addParticipantToProject(participantsPanel.project, participantsPanel.selectedParticipant);
+            participantsProxy.addParticipantToProject(participantsPanel.project, participantsPanel.selectedParticipant);
         }
         
         private function onRemoveParticipant(event:Event):void
         {
-            participantProxy.removeParticipantFromProject(participantsPanel.project, participantsPanel.selectedParticipant);
+            participantsProxy.removeParticipantFromProject(participantsPanel.project, participantsPanel.selectedParticipant);
         }
         
         override public function listNotificationInterests():Array
@@ -66,9 +66,9 @@ package flexclient.view
                     break;
                     
                 case ApplicationFacade.PROJECT_ADDED:
-                    participantsPanel.project = note.getBody() as ProjectVO;
-                    var participantVO:ParticipantVO = new ParticipantVO(participantsPanel.project._key);
-                    participantProxy.addItem(participantVO);
+                    participantsPanel.project = note.getBody() as Project;
+                    var participantVO:Participant = new Participant(participantsPanel.project._key);
+                    participantsProxy.addItem(participantVO);
                     clearForm();
                     break;
                     
@@ -85,14 +85,14 @@ package flexclient.view
                     break;
                     
                 case ApplicationFacade.PROJECT_SELECTED:
-                    participantsPanel.project = note.getBody() as ProjectVO;
-                    participantsPanel.projectParticipants = participantProxy.getProjectParticipants(participantsPanel.project._key);
+                    participantsPanel.project = note.getBody() as Project;
+                    participantsPanel.projectParticipants = participantsProxy.getProjectParticipants(participantsPanel.project._key);
                     participantsPanel.participantCombo.selectedItem = ParticipantsEnum.NONE_SELECTED;
                     break;
                     
                 case ApplicationFacade.PARTICIPANT_ADDED_TO_PROJECT:
                     participantsPanel.projectParticipants = null;
-                    participantsPanel.projectParticipants = participantProxy.getProjectParticipants(participantsPanel.project._key);
+                    participantsPanel.projectParticipants = participantsProxy.getProjectParticipants(participantsPanel.project._key);
                     break;
             }
         }

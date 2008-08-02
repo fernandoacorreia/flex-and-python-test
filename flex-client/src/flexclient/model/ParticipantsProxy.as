@@ -4,16 +4,16 @@ package flexclient.model
     import org.puremvc.as3.interfaces.IProxy;
     import org.puremvc.as3.patterns.proxy.Proxy;
     import org.puremvc.as3.patterns.observer.Notification;
-    import flexclient.model.vo.ParticipantVO;
-    import flexclient.model.vo.ProjectVO;
+    import flexclient.model.Participant;
+    import flexclient.model.Project;
     import flexclient.model.enum.ParticipantsEnum;
     import flexclient.ApplicationFacade;
 
-    public class ParticipantProxy extends Proxy implements IProxy
+    public class ParticipantsProxy extends Proxy implements IProxy
     {
-        public static const NAME:String = 'ParticipantProxy';
+        public static const NAME:String = 'ParticipantsProxy';
 
-        public function ParticipantProxy()
+        public function ParticipantsProxy()
         {
             super(NAME, new ArrayCollection);            
         }
@@ -42,7 +42,7 @@ package flexclient.model
         }
 
         // Determines if the project has a given participant.
-        public function doesProjectHaveParticipant(project:ProjectVO, participant:ParticipantsEnum):Boolean
+        public function doesProjectHaveParticipant(project:Project, participant:ParticipantsEnum):Boolean
         {
         	var projectParticipants:ArrayCollection = getProjectParticipants(project._key);
             var hasParticipant:Boolean = false;
@@ -55,7 +55,7 @@ package flexclient.model
         }
 
         // Adds a participant to a project.
-        public function addParticipantToProject(project:ProjectVO, participant:ParticipantsEnum) : void
+        public function addParticipantToProject(project:Project, participant:ParticipantsEnum) : void
         {
             var result:Boolean = false;
             if (!doesProjectHaveParticipant(project, participant)) {
@@ -67,7 +67,7 @@ package flexclient.model
         }
 
         // Removes a participant from a project.
-        public function removeParticipantFromProject(project:ProjectVO, participant:ParticipantsEnum) : void
+        public function removeParticipantFromProject(project:Project, participant:ParticipantsEnum) : void
         {
             if (doesProjectHaveParticipant(project, participant)) {
 	        	var projectParticipants:ArrayCollection = getProjectParticipants(project._key);
@@ -89,9 +89,9 @@ package flexclient.model
                 }
             }
             // there is no list of participants for the project, so create one
-            var newParticipantVO:ParticipantVO = new ParticipantVO(key);
-            participants.addItem(newParticipantVO);
-            return newParticipantVO.participants as ArrayCollection;
+            var newParticipant:Participant = new Participant(key);
+            participants.addItem(newParticipant);
+            return newParticipant.participants as ArrayCollection;
         }
     }
 }

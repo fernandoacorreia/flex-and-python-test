@@ -11,7 +11,7 @@
 
     <mx:Script>
         <![CDATA[
-            import flexclient.model.vo.ProjectVO;
+            import flexclient.model.Project;
             import flexclient.model.enum.DepartmentsEnum;
 
             public static const ADD:String    = "add";
@@ -21,7 +21,7 @@
             public static const MODE_ADD:String  = "modeAdd";
             public static const MODE_EDIT:String = "modeEdit";
 
-            [Bindable] public var project:ProjectVO;
+            [Bindable] public var project:Project;
             [Bindable] public var mode:String;
 
             // Submits the add or update.

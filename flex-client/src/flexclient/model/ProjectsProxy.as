@@ -2,17 +2,17 @@ package flexclient.model
 {
 	import flash.net.NetConnection;
 	import flash.net.Responder;	
-	import flexclient.model.vo.ProjectVO;	
+	import flexclient.model.Project;	
 	import mx.collections.ArrayCollection;	
 	import org.puremvc.as3.interfaces.IProxy;
 	import org.puremvc.as3.patterns.proxy.Proxy;
 	import flexclient.model.enum.DepartmentsEnum;
 
-    public class ProjectProxy extends Proxy implements IProxy
+    public class ProjectsProxy extends Proxy implements IProxy
     {
-        public static const NAME:String = 'ProjectProxy';
+        public static const NAME:String = 'ProjectsProxy';
         
-        public function ProjectProxy()
+        public function ProjectsProxy()
         {
             super(NAME, new ArrayCollection);
             Gateway().call("ProjectsService.get_all", new Responder(onGetAllResult));
@@ -36,7 +36,7 @@ package flexclient.model
         {
             for (var i:int = 0; i < result.length; i++)
             {
-            	projects.addItem(new ProjectVO(result[i]))
+            	projects.addItem(new Project(result[i]))
             }
         }
 
@@ -48,7 +48,7 @@ package flexclient.model
         
         private function onAddItemResult(result:Object):void
         {
-            projects.addItem(new ProjectVO(result));
+            projects.addItem(new Project(result));
         }
                 
         // Updates an item in the data.
@@ -63,7 +63,7 @@ package flexclient.model
             {
                 if (projects[i]._key == result._key)
                 {
-                    projects[i] = new ProjectVO(result);
+                    projects[i] = new Project(result);
                     break;
                 }
             }
@@ -72,7 +72,7 @@ package flexclient.model
         // Deletes an item in the data.
         public function deleteItem(item:Object):void
         {
-            var project:ProjectVO = item as ProjectVO;
+            var project:Project = item as Project;
         	Gateway().call("ProjectsService.delete", null, project);
             for (var i:int = 0; i < projects.length; i++)
             {

@@ -1,14 +1,14 @@
-package flexclient.model.vo
+package flexclient.model
 {
     import mx.collections.ArrayCollection;
     
     [Bindable]
-    public class ParticipantVO
+    public class Participant
     {
         public var projectKey:String;
         public var participants:ArrayCollection = new ArrayCollection();
 
-        public function ParticipantVO(projectKey:String, participants:Array = null)
+        public function Participant(projectKey:String, participants:Array = null)
         {
             this.projectKey = projectKey;
             if(participants != null) this.participants = new ArrayCollection(participants);

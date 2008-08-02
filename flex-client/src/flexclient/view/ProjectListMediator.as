@@ -6,13 +6,13 @@ package flexclient.view
     import org.puremvc.as3.patterns.mediator.Mediator;
     import org.puremvc.as3.patterns.observer.Notification;
     import flexclient.ApplicationFacade;
-    import flexclient.model.vo.ProjectVO;
-    import flexclient.model.ProjectProxy;
+    import flexclient.model.Project;
+    import flexclient.model.ProjectsProxy;
     import flexclient.view.components.ProjectList;
 
     public class ProjectListMediator extends Mediator implements IMediator
     {
-        private var projectProxy:ProjectProxy;
+        private var projectsProxy:ProjectsProxy;
 
         public static const NAME:String = 'ProjectListMediator';
 
@@ -24,8 +24,8 @@ package flexclient.view
             projectList.addEventListener(ProjectList.DELETE, onDelete);
             projectList.addEventListener(ProjectList.SELECT, onSelect);
 
-            projectProxy = facade.retrieveProxy(ProjectProxy.NAME) as ProjectProxy;
-            projectList.projects = projectProxy.projects;
+            projectsProxy = facade.retrieveProxy(ProjectsProxy.NAME) as ProjectsProxy;
+            projectList.projects = projectsProxy.projects;
         }
         
         private function get projectList():ProjectList
@@ -35,7 +35,7 @@ package flexclient.view
         
         private function onNew(event:Event):void
         {
-            var project:ProjectVO = new ProjectVO();
+            var project:Project = new Project();
             sendNotification(ApplicationFacade.NEW_PROJECT, project);
         }
         

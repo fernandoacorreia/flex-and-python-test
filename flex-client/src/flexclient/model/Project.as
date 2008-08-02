@@ -1,10 +1,10 @@
-package flexclient.model.vo
+package flexclient.model
 {
     import mx.collections.ArrayCollection;
     import flexclient.model.enum.DepartmentsEnum;
     
     [Bindable]
-    public class ProjectVO
+    public class Project
     {
     	public var _key:String;
         public var code:int;
@@ -13,7 +13,7 @@ package flexclient.model.vo
         public var modified_at:Date;
         public var department:int;
         
-        public function ProjectVO(dto:Object = null)
+        public function Project(dto:Object = null)
         {
         	if (dto == null) return;
 			_key = dto._key;
