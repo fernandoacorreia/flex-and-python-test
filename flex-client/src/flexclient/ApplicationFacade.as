@@ -20,7 +20,7 @@ package flexclient
         public static const PROJECT_DELETED:String = "PROJECT_DELETED";
 
         public static const ADD_PARTICIPANT:String = "ADD_PARTICIPANT";
-        public static const PARTICIPANT_ADDED_TO_PROJECT:String = "PARTICIPANT_ADDED_TO_PROJECT";
+        public static const PARTICIPANT_ADDED:String = "PARTICIPANT_ADDED";
         
         /**
          * Singleton ApplicationFacade Factory Method.
@@ -46,7 +46,6 @@ package flexclient
             super.initializeController();            
             registerCommand(STARTUP, StartupCommand);
             registerCommand(DELETE_PROJECT, DeleteProjectCommand);
-            registerCommand(PARTICIPANT_ADDED_TO_PROJECT, ParticipantAddedToProjectCommand);
         }
     }
 }

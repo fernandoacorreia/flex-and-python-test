@@ -3,10 +3,11 @@ package flexclient.model
 	import flash.net.NetConnection;
 	import flash.net.Responder;	
 	import flexclient.model.Project;	
+    import flexclient.model.enum.DepartmentsEnum;
+    import flexclient.model.ServiceGateway;
 	import mx.collections.ArrayCollection;	
 	import org.puremvc.as3.interfaces.IProxy;
 	import org.puremvc.as3.patterns.proxy.Proxy;
-	import flexclient.model.enum.DepartmentsEnum;
 
     public class ProjectsProxy extends Proxy
     {
@@ -15,21 +16,13 @@ package flexclient.model
         public function ProjectsProxy()
         {
             super(NAME, new ArrayCollection);
-            Gateway().call("ProjectsService.get_all", new Responder(onGetAllResult));
+            ServiceGateway.GetConnection().call("ProjectsService.get_all", new Responder(onGetAllResult));
         }
 
         // Returns data property cast to proper type.
         public function get projects():ArrayCollection
         {
             return data as ArrayCollection;
-        }
-
-        private function Gateway():NetConnection
-        {
-            var gateway:NetConnection;
-            gateway = new NetConnection();
-            gateway.connect("http://localhost:8080/");
-            return gateway;
         }
 
         private function onGetAllResult(result:Array):void
@@ -43,7 +36,7 @@ package flexclient.model
         // Adds an item to the data.
         public function addItem(item:Object):void
         {
-        	Gateway().call("ProjectsService.save", new Responder(onAddItemResult), item);
+        	ServiceGateway.GetConnection().call("ProjectsService.save", new Responder(onAddItemResult), item);
         }
 
         private function onAddItemResult(result:Object):void
@@ -54,7 +47,7 @@ package flexclient.model
         // Updates an item in the data.
         public function updateItem(item:Object):void
         {
-        	Gateway().call("ProjectsService.save", new Responder(onUpdateItemResult), item);
+        	ServiceGateway.GetConnection().call("ProjectsService.save", new Responder(onUpdateItemResult), item);
         }
 
         private function onUpdateItemResult(result:Object):void
@@ -73,7 +66,7 @@ package flexclient.model
         public function deleteItem(item:Object):void
         {
             var project:Project = item as Project;
-        	Gateway().call("ProjectsService.delete", null, project);
+        	ServiceGateway.GetConnection().call("ProjectsService.delete", null, project);
             for (var i:int = 0; i < projects.length; i++)
             {
                 if (projects[i]._key == project._key) {

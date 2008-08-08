@@ -12,13 +12,13 @@
         <![CDATA[
             import mx.collections.ArrayCollection;
             import flexclient.model.Project;
-            import flexclient.model.enum.ParticipantsEnum;
+            import flexclient.model.Participant;
 
             public static const ADD:String = 'add';
             public static const REMOVE:String = 'remove';
 
             [Bindable] public var project:Project;
-            [Bindable] public var selectedParticipant:ParticipantsEnum;
+            [Bindable] public var selectedParticipant:Participant;
             [Bindable] public var projectParticipants:ArrayCollection;
 
             // Send the named event.
@@ -30,15 +30,7 @@
             // Selects participant to remove.
             private function selectParticipantToRemove():void
             {
-                participantCombo.selectedItem = ParticipantsEnum.NONE_SELECTED;
-                selectedParticipant=participantList.selectedItem as ParticipantsEnum;
-            }
-
-            // Selects participant to add.
-            private function selectParticipantToAdd():void
-            {
-                participantList.selectedIndex = -1;
-                selectedParticipant=participantCombo.selectedItem as ParticipantsEnum;
+                selectedParticipant = participantList.selectedItem as Participant;
             }
         ]]>
     </mx:Script>

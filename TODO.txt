@@ -4,6 +4,7 @@ Features:
 * Optimistic concurrency control.
 * Integrate user authentication (credentials) on the Flex client and the GAE server - http://pyamf.org/browser/examples/trunk/authentication/Readme.txt
 * Use the RESTful convention.
+** http://jgeewax.wordpress.com/2008/08/02/app3-a-flexible-rest-interfact-to-appengine/
 * Implement generic functions to converter GAE objects to and from DTOs.
   See obj_to_gae at http://www.nabble.com/Python-Django-Google-App-Engine-De-serialization-Issue-td18221229.html
 

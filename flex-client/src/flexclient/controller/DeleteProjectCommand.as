@@ -19,8 +19,8 @@ package flexclient.controller
             var project:Project = notification.getBody() as Project;
             var projectsProxy:ProjectsProxy = facade.retrieveProxy(ProjectsProxy.NAME) as ProjectsProxy;
             var participantsProxy:ParticipantsProxy = facade.retrieveProxy(ParticipantsProxy.NAME) as ParticipantsProxy;
+            // TODO: delete project participants -- participantsProxy.deleteItem(project);
             projectsProxy.deleteItem(project);
-            participantsProxy.deleteItem(project);
             sendNotification(ApplicationFacade.PROJECT_DELETED);
         }
     }

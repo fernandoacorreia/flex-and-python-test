@@ -95,13 +95,31 @@ def initialize():
         project_service.save(project)
 
     # insert participants
+    project_104_key = project_service.get_by_code(104)._key
     project_201_key = project_service.get_by_code(201)._key
+    project_207_key = project_service.get_by_code(207)._key
     project_321_key = project_service.get_by_code(321)._key
-    sample_participants = [ {"project_key": project_201_key, "name": "First Participant",},
-                            {"project_key": project_201_key, "name": "Second Participant",},
-                            {"project_key": project_201_key, "name": "Third Participant",},
-                            {"project_key": project_321_key, "name": "Fourth Participant",},
-                            {"project_key": project_321_key, "name": "Fifth Participant",} ]
+    sample_participants = [ {"project_key": project_104_key, "name": "Breanna Gallasin",},
+                            {"project_key": project_104_key, "name": "Fyra Ginn",},
+                            {"project_key": project_104_key, "name": "Jakuu Retwin",},
+                            {"project_key": project_104_key, "name": "Jeran Corse",},
+                            {"project_key": project_201_key, "name": "Kavindra Sudime",},
+                            {"project_key": project_201_key, "name": "Ken Gundo",},
+                            {"project_key": project_201_key, "name": "Kitrep Starr",},
+                            {"project_key": project_201_key, "name": "Zarli Orden",},
+                            {"project_key": project_201_key, "name": "Murgh Ashen",},
+                            {"project_key": project_207_key, "name": "Meeraval Soto",},
+                            {"project_key": project_207_key, "name": "Milka Praxon",},
+                            {"project_key": project_207_key, "name": "Fyra Ginn",},
+                            {"project_key": project_207_key, "name": "Zarli Orden",},
+                            {"project_key": project_207_key, "name": "Murgh Ashen",},
+                            {"project_key": project_321_key, "name": "Rundo Quamar",},
+                            {"project_key": project_321_key, "name": "Kavindra Sudime",},
+                            {"project_key": project_321_key, "name": "Uldir Greeta",},
+                            {"project_key": project_321_key, "name": "Vash Cari",},
+                            {"project_key": project_321_key, "name": "Breanna Gallasin",},
+                            {"project_key": project_321_key, "name": "Fyra Ginn",},
+                            {"project_key": project_321_key, "name": "Jeran Corse",} ]
     for participant in sample_participants:
         project_participants_service.save(participant)
 

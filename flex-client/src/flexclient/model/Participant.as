@@ -1,17 +1,33 @@
 package flexclient.model
 {
-    import mx.collections.ArrayCollection;
-    
     [Bindable]
     public class Participant
     {
+        public var _key:String;
         public var projectKey:String;
-        public var participants:ArrayCollection = new ArrayCollection();
+        public var name:String;
+        public var created_at:Date;
+        public var modified_at:Date;
 
-        public function Participant(projectKey:String, participants:Array = null)
+        public static function fromDto(dto:Object = null):Participant
         {
-            this.projectKey = projectKey;
-            if(participants != null) this.participants = new ArrayCollection(participants);
-        } 
+        	var participant:Participant = new Participant();
+            participant._key = dto._key;
+            participant.projectKey = dto.project_key;
+            participant.name = dto.name;
+            participant.created_at = dto.created_at;
+            participant.modified_at = dto.modified_at;
+            return participant;
+        }
+        
+        public function toDto():Object
+        {
+            var dto:Object = new Object();
+            dto._key = _key;
+            dto.projectKey = projectKey;
+            dto.name = name;
+            dto.modified_at = modified_at;
+            return dto;
+        }
     }
 }
