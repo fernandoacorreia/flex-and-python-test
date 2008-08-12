@@ -29,5 +29,10 @@ package flexclient.model
             dto.modified_at = modified_at;
             return dto;
         }
+        
+        public function toString():String
+        {
+        	return name;
+        }
     }
 }

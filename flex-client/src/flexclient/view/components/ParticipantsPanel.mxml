@@ -10,6 +10,7 @@
 
     <mx:Script>
         <![CDATA[
+            import mx.utils.StringUtil;
             import mx.collections.ArrayCollection;
             import flexclient.model.Project;
             import flexclient.model.Participant;
@@ -42,14 +43,11 @@
 
     <!-- Participant Maintenance Controls -->
     <mx:ControlBar>
-
-        <!-- Participant to Add -->
-        <mx:ComboBox id="participantCombo" labelField="value" enabled="{project != null}"
-            dataProvider="{ParticipantsEnum.list}" change="selectParticipantToAdd()"/>
-
+        <mx:TextInput id="newParticipant" enabled="{project != null}"/>
+        
         <!-- Add Participant Button -->
         <mx:Button label="Add" click="sendEvent(ADD)"
-            enabled="{participantCombo.selectedItem != ParticipantsEnum.NONE_SELECTED}"/>
+        	enabled="{StringUtil.trim(newParticipant.text).length > 0}"/>
 
         <!-- Remove Participant Button -->
         <mx:Button label="Remove" click="sendEvent(REMOVE)"

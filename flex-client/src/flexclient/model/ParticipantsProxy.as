@@ -1,11 +1,12 @@
 package flexclient.model
 {
-    import flash.net.NetConnection;
-    import flash.net.Responder; 
-    import flexclient.ApplicationFacade;    
-    import flexclient.model.ServiceGateway;
+    import flash.net.Responder;
+    
+    import flexclient.ApplicationFacade;
+    
     import mx.collections.ArrayCollection;
-    import mx.controls.Alert;    
+    import mx.controls.Alert;
+    
     import org.puremvc.as3.patterns.proxy.Proxy;
 
     public class ParticipantsProxy extends Proxy
@@ -15,8 +16,19 @@ package flexclient.model
         public function ParticipantsProxy()
         {
             super(NAME, new Object());
+            ServiceGateway.GetConnection().call("ProjectParticipantsService.get_all", new Responder(onGetAllResult, onFault));
         }
         
+        private function onGetAllResult(result:Array):void
+        {
+            for (var i:int = 0; i < result.length; i++)
+            {
+            	var participant:Participant = Participant.fromDto(result[i]);
+            	var participants:ArrayCollection = getProjectParticipants(participant.projectKey);
+            	participants.addItem(participant);
+            }
+        }
+
         // Gets the data property cast to the appropriate type.
         public function get participants():Object
         {
@@ -46,9 +58,14 @@ package flexclient.model
             sendNotification(ApplicationFacade.PARTICIPANT_ADDED, participant);
         }
         
-		public function onFault(fault:String) : void 
+		public function onFault(fault:Object) : void 
 		{
-			Alert.show('Error: ' + fault);
+			var message:String;
+			if (fault.description != undefined)
+			    message = fault.code + ": " + fault.description;
+			else
+			    message = fault.toString();
+			Alert.show('Error: ' + message);
 		}
         
         // Deletes an item from the data.

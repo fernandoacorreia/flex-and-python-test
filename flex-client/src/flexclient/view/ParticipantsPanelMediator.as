@@ -10,7 +10,6 @@ package flexclient.view
     import flexclient.model.Project;
     import flexclient.model.ParticipantsProxy;
     import flexclient.model.Participant;
-    import flexclient.model.enum.ParticipantsEnum;
     import flexclient.view.components.ParticipantsPanel;
 
     public class ParticipantsPanelMediator extends Mediator implements IMediator
@@ -35,12 +34,14 @@ package flexclient.view
         
         private function onAddParticipant(event:Event):void
         {
-            participantsProxy.addParticipantToProject(participantsPanel.project, participantsPanel.selectedParticipant);
+            // TODO: adicionar participante ao projeto
+            // participantsProxy.addParticipantToProject(participantsPanel.project, participantsPanel.selectedParticipant);
         }
         
         private function onRemoveParticipant(event:Event):void
         {
-            participantsProxy.removeParticipantFromProject(participantsPanel.project, participantsPanel.selectedParticipant);
+            // TODO: Remover participante do projeto
+            // participantsProxy.removeParticipantFromProject(participantsPanel.project, participantsPanel.selectedParticipant);
         }
         
         override public function listNotificationInterests():Array
@@ -66,9 +67,6 @@ package flexclient.view
                     break;
                     
                 case ApplicationFacade.PROJECT_ADDED:
-                    participantsPanel.project = note.getBody() as Project;
-                    var participant:Participant = new Participant(participantsPanel.project._key);
-                    participantsProxy.addItem(participant);
                     clearForm();
                     break;
                     
@@ -87,7 +85,7 @@ package flexclient.view
                 case ApplicationFacade.PROJECT_SELECTED:
                     participantsPanel.project = note.getBody() as Project;
                     participantsPanel.projectParticipants = participantsProxy.getProjectParticipants(participantsPanel.project._key);
-                    participantsPanel.participantCombo.selectedItem = ParticipantsEnum.NONE_SELECTED;
+                    participantsPanel.newParticipant.text = "";
                     break;
                     
                 case ApplicationFacade.PARTICIPANT_ADDED:
@@ -101,7 +99,7 @@ package flexclient.view
         {        
             participantsPanel.project = null;
             participantsPanel.projectParticipants = null;
-            participantsPanel.participantCombo.selectedItem = ParticipantsEnum.NONE_SELECTED;
+            participantsPanel.newParticipant.text = "";
         }
     }
 }
