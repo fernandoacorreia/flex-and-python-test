@@ -24,7 +24,7 @@ package flexclient.model
         {
             var dto:Object = new Object();
             dto._key = _key;
-            dto.projectKey = projectKey;
+            dto.project_key = projectKey;
             dto.name = name;
             dto.modified_at = modified_at;
             return dto;

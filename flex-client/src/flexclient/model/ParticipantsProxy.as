@@ -46,8 +46,6 @@ package flexclient.model
         public function addParticipant(participant:Participant):void
         {
         	ServiceGateway.GetConnection().call("ProjectParticipantsService.save", new Responder(onAddParticipantResult, onFault), participant.toDto());
-        	var projectParticipants:ArrayCollection = getProjectParticipants(participant.projectKey);
-            projectParticipants.addItem(participant);
         }
         
         private function onAddParticipantResult(result:Object):void
@@ -71,20 +69,25 @@ package flexclient.model
         // Deletes an item from the data.
         public function deleteParticipant(participant:Participant):void
         {
+            ServiceGateway.GetConnection().call("ProjectParticipantsService.delete", new Responder(null, onFault), participant.toDto());
             var projectParticipants:ArrayCollection = getProjectParticipants(participant.projectKey);
             for (var i:int = 0; i < projectParticipants.length; i++) { 
                 var currentParticipant:Participant = projectParticipants.getItemAt(i) as Participant;
                 if (currentParticipant._key == participant._key) {
                     projectParticipants.removeItemAt(i);
-                    ServiceGateway.GetConnection().call("ProjectParticipantsService.delete", new Responder(onDeleteParticipantResult, onFault), participant.toDto());
                     break;
                 }
             }
         }
-
-        private function onDeleteParticipantResult(result:Object):void
+        
+        public function deleteParticipants(project:Project):void
         {
-        	// TODO
+            var projectParticipants:ArrayCollection = getProjectParticipants(project._key);
+            for (var i:int = 0; i < projectParticipants.length; i++) { 
+                var currentParticipant:Participant = projectParticipants.getItemAt(i) as Participant;
+                ServiceGateway.GetConnection().call("ProjectParticipantsService.delete", new Responder(null, onFault), currentParticipant.toDto());
+            }
+            projectParticipants.removeAll();
         }
     }
 }

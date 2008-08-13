@@ -19,7 +19,6 @@
             public static const REMOVE:String = 'remove';
 
             [Bindable] public var project:Project;
-            [Bindable] public var selectedParticipant:Participant;
             [Bindable] public var projectParticipants:ArrayCollection;
 
             // Send the named event.
@@ -27,19 +26,12 @@
             {
                 dispatchEvent(new Event(eventName, true));
             }
-
-            // Selects participant to remove.
-            private function selectParticipantToRemove():void
-            {
-                selectedParticipant = participantList.selectedItem as Participant;
-            }
         ]]>
     </mx:Script>
 
     <!-- Project's Participants -->
     <mx:List id="participantList" width="100%" height="100%" labelField="value"
-    	rowCount="5"
-        dataProvider="{projectParticipants}" change="selectParticipantToRemove()"/>
+    	rowCount="5" dataProvider="{projectParticipants}"/>
 
     <!-- Participant Maintenance Controls -->
     <mx:ControlBar>

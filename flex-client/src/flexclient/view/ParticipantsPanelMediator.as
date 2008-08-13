@@ -1,16 +1,15 @@
 package flexclient.view
 {
-    import flash.events.Event;
-    import mx.collections.ArrayCollection;
+    import flash.events.Event;    
+    import flexclient.ApplicationFacade;
+    import flexclient.model.Participant;
+    import flexclient.model.ParticipantsProxy;
+    import flexclient.model.Project;
+    import flexclient.view.components.ParticipantsPanel;
+    import mx.utils.StringUtil;    
     import org.puremvc.as3.interfaces.IMediator;
     import org.puremvc.as3.interfaces.INotification;
     import org.puremvc.as3.patterns.mediator.Mediator;
-    import org.puremvc.as3.patterns.observer.Notification;
-    import flexclient.ApplicationFacade;
-    import flexclient.model.Project;
-    import flexclient.model.ParticipantsProxy;
-    import flexclient.model.Participant;
-    import flexclient.view.components.ParticipantsPanel;
 
     public class ParticipantsPanelMediator extends Mediator implements IMediator
     {
@@ -23,8 +22,7 @@ package flexclient.view
             super(NAME, viewComponent);            
             participantsPanel.addEventListener(ParticipantsPanel.ADD, onAddParticipant);
             participantsPanel.addEventListener(ParticipantsPanel.REMOVE, onRemoveParticipant);
-            participantsProxy = facade.retrieveProxy(ParticipantsProxy.NAME) as ParticipantsProxy;
-                
+            participantsProxy = facade.retrieveProxy(ParticipantsProxy.NAME) as ParticipantsProxy;                
         }
         
         private function get participantsPanel():ParticipantsPanel
@@ -34,14 +32,18 @@ package flexclient.view
         
         private function onAddParticipant(event:Event):void
         {
-            // TODO: adicionar participante ao projeto
-            // participantsProxy.addParticipantToProject(participantsPanel.project, participantsPanel.selectedParticipant);
+            var newParticipant:Participant = new Participant();
+            newParticipant.projectKey = participantsPanel.project._key;
+            newParticipant.name = StringUtil.trim(participantsPanel.newParticipant.text);
+            participantsProxy.addParticipant(newParticipant);
+            participantsPanel.newParticipant.text = "";
         }
         
         private function onRemoveParticipant(event:Event):void
         {
-            // TODO: Remover participante do projeto
-            // participantsProxy.removeParticipantFromProject(participantsPanel.project, participantsPanel.selectedParticipant);
+            var selectedParticipant:Participant;
+            selectedParticipant = participantsPanel.participantList.selectedItem as Participant;
+            participantsProxy.deleteParticipant(selectedParticipant);
         }
         
         override public function listNotificationInterests():Array

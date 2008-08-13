@@ -1,5 +1,4 @@
 Features:
-* Make a better use of objects on the Flex side.
 * Use RemoteObject - http://pyamf.org/wiki/RemoteObjectConfig
 * Optimistic concurrency control.
 * Integrate user authentication (credentials) on the Flex client and the GAE server - http://pyamf.org/browser/examples/trunk/authentication/Readme.txt
