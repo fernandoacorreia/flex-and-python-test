@@ -1,0 +1,26 @@
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" /> 
+    <title>Projects</title>
+</head>
+<body>
+    <h2>Projects</h2>
+    <table>
+    {% for project in projects %}
+        <tr>
+        <td>
+            <b>{{ project.name }}</b>
+        </td>
+        <td>
+            <ul>
+            {% for participant in project.participants %}
+                <li>{{ participant.name }}</li>
+            {% endfor %}
+            </ul>
+        </td>
+        </tr>
+    {% endfor %}
+    <table>
+    <p><a href="client/FlexClient.html">Edit projects</a></p>
+</body>
+</html>

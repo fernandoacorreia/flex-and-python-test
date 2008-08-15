@@ -9,5 +9,14 @@ handlers:
   upload: crossdomain\.xml
   expiration: "5s"
 
+- url: /stylesheets
+  static_dir: stylesheets
+
+- url: /client
+  static_dir: client
+
+- url: /services/.*
+  script: services/main.py
+
 - url: .*
   script: main.py

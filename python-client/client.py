@@ -27,16 +27,18 @@ from pyamf.remoting.client import RemotingService
 def usage():
     print __doc__
 
+def get_service(service_name):
+    gateway = RemotingService('http://localhost:8080/services/')
+    return gateway.getService(service_name)
+
 def test():
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('EchoService')
+    project_service = get_service('EchoService')
     print project_service.echo('test')
     print project_service.echo_upper('test')
     print project_service.echo_upper(1)
 
 def insert(code, name):
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('ProjectsService')
+    project_service = get_service('ProjectsService')
     new_project = {
         "code": int(code),
         "name": name,
@@ -46,16 +48,14 @@ def insert(code, name):
     print_project(project)
 
 def update(code, name):
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('ProjectsService')
+    project_service = get_service('ProjectsService')
     project = project_service.get_by_code(int(code))
     project.name = name
     project = project_service.save(project)
     print_project(project)
 
 def get(code):
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('ProjectsService')
+    project_service = get_service('ProjectsService')
     project = project_service.get_by_code(int(code))
     if project == None:
         print "Project %s not found." % (code)
@@ -63,8 +63,7 @@ def get(code):
         print_project(project)
 
 def delete(codes):
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('ProjectsService')
+    project_service = get_service('ProjectsService')
     for code in codes:
         project = project_service.get_by_code(int(code))
         if project != None:
@@ -72,9 +71,8 @@ def delete(codes):
 
 def initialize():
     # prepare service objects
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('ProjectsService')
-    project_participants_service = gateway.getService('ProjectParticipantsService')
+    project_service = get_service('ProjectsService')
+    project_participants_service = get_service('ProjectParticipantsService')
 
     # delete all participants
     participants = project_participants_service.get_all()
@@ -122,15 +120,13 @@ def initialize():
         project_participants_service.save(participant)
 
 def all():
-    gateway = RemotingService('http://localhost:8080/')
-    project_service = gateway.getService('ProjectsService')
+    project_service = get_service('ProjectsService')
     projects = project_service.get_all()
     for project in projects:
         print_project(project)
 
-def participants():        
-    gateway = RemotingService('http://localhost:8080/')
-    project_participants_service = gateway.getService('ProjectParticipantsService')
+def participants():
+    project_participants_service = get_service('ProjectParticipantsService')
     participants = project_participants_service.get_all()
     for participant in participants:
         pprint(participant)

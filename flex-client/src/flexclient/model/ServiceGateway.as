@@ -11,7 +11,7 @@ package flexclient.model
             if (connection == null)
             {
                 connection = new NetConnection();
-                connection.connect("http://localhost:8080/");
+                connection.connect("http://localhost:8080/services/");
             }
             return connection;
         }
