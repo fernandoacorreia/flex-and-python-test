@@ -9,10 +9,6 @@ This module contains the message classes used with Flex Data Services.
 @see: U{RemoteObject on OSFlash (external)
 <http://osflash.org/documentation/amf3#remoteobject>}
 
-@author: U{Arnar Birgisson<mailto:arnarbi@gmail.com>}
-@author: U{Thijs Triemstra<mailto:info@collab.nl>}
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -83,7 +79,7 @@ class AbstractMessage(object):
         m = '<%s ' % self.__class__.__name__
 
         for k, v in self.__dict__.iteritems():
-            m += ' %s=%s' % (k, v)
+            m += ' %s=%r' % (k, v)
 
         return m + " />"
 
@@ -169,6 +165,8 @@ class CommandMessage(AsyncMessage):
     UNKNOWN_OPERATION = 1000
     #: This is used to unsubscribe from a remote destination.
     UNSUBSCRIBE_OPERATION = 1
+    #: This operation is used to indicate that a channel has disconnected.
+    DISCONNECT_OPERATION = 12
 
     def __init__(self, *args, **kwargs):
         AsyncMessage.__init__(self, *args, **kwargs)

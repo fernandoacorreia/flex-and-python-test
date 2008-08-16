@@ -4,8 +4,6 @@
 """
 Twisted gateway tests.
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -274,6 +272,28 @@ class TwistedServerTestCase(unittest.TestCase):
         d.addCallback(check)
 
         return d.addBoth(switch)
+
+    def test_tuple(self):
+        def echo(data):
+            return data
+
+        self.gw.addService(echo)
+
+        env = remoting.Envelope(pyamf.AMF0, pyamf.ClientTypes.Flash9)
+        request = remoting.Request('echo', body=[('Hi', 'Mom')])
+        env['/1'] = request
+
+        d = client.getPage("http://127.0.0.1:%d/" % (self.port,),
+                method="POST", postdata=remoting.encode(env).getvalue())
+
+        def cb(result):
+            response = remoting.decode(result)
+            body_response = response['/1']
+
+            self.assertEquals(body_response.status, remoting.STATUS_OK)
+            self.assertEquals(body_response.body, ['Hi', 'Mom'])
+
+        return d.addCallback(cb)
 
 class DummyHTTPRequest:
     def __init__(self):
@@ -729,6 +749,28 @@ class AMF3RequestProcessorTestCase(unittest.TestCase):
         def cb(result):
             try:
                 self.assertTrue(result)
+            except:
+                d.errback()
+            else:
+                d.callback(None)
+
+        proc(request).addCallback(cb).addErrback(lambda failure: d.errback())
+
+        return d
+
+    def test_async(self):
+        d = defer.Deferred()
+
+        gw = _twisted.TwistedGateway({'spam.eggs': lambda x: x}, expose_request=False)
+        proc = _twisted.AMF3RequestProcessor(gw)
+
+        request = remoting.Request('null', body=[messaging.AsyncMessage(body=[None], destination='spam', operation='eggs')])
+
+        def cb(result):
+            msg = result.body
+
+            try:
+                self.assertTrue(isinstance(msg, messaging.AcknowledgeMessage))
             except:
                 d.errback()
             else:

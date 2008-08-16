@@ -7,17 +7,12 @@ B{PyAMF} provides B{A}ction B{M}essage B{F}ormat
 Python that is compatible with the
 U{Flash Player<http://en.wikipedia.org/wiki/Flash_Player>}.
 
-@author: U{Arnar Birgisson<mailto:arnarbi@gmail.com>}
-@author: U{Thijs Triemstra<mailto:info@collab.nl>}
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @copyright: Copyright (c) 2007-2008 The PyAMF Project. All Rights Reserved.
 @contact: U{dev@pyamf.org<mailto:dev@pyamf.org>}
 @see: U{http://pyamf.org}
 
 @since: October 2007
-@status: Beta
-@version: 0.3.1
+@version: 0.4
 """
 
 import types
@@ -33,19 +28,16 @@ __all__ = [
     '__version__']
 
 #: PyAMF version number.
-__version__ = (0, 3, 1)
+__version__ = (0, 4, 0)
 
 #: Class mapping support.
 CLASS_CACHE = {}
 #: Class loaders.
 CLASS_LOADERS = []
-
 #: Custom type map.
 TYPE_MAP = {}
-
 #: Maps error classes to string codes.
 ERROR_CLASS_MAP = {}
-
 #: Specifies that objects are serialized using AMF for ActionScript 1.0 and 2.0.
 AMF0 = 0
 #: Specifies that objects are serialized using AMF for ActionScript 3.0.
@@ -128,6 +120,9 @@ class BaseContext(object):
         self.clear()
 
     def clear(self):
+        """
+        Clears the AMF context.
+        """
         self.objects = []
         self.rev_objects = {}
 
@@ -191,7 +186,10 @@ class ASObject(dict):
     """
     This class represents a Flash Actionscript Object (typed or untyped).
 
-    I supply a C{__builtin__.dict} interface to support get/setattr calls.
+    I supply a C{__builtin__.dict} interface to support C{get}/C{setattr}
+    calls.
+
+    @raise AttributeError: Unknown attribute.
     """
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -217,7 +215,7 @@ class ClassMetaData(list):
     """
     I hold a list of tags relating to the class. The idea behind this is
     to emulate the metadata tags you can supply to ActionScript,
-    e.g. static/dynamic.
+    e.g. C{static}/C{dynamic}.
     """
     _allowed_tags = (
         ('static', 'dynamic', 'external'),
@@ -300,14 +298,21 @@ class ClassAlias(object):
         @param alias: The alias to the class e.g. C{org.example.Person}. If the
             value of this is C{None}, then it is worked out based on the C{klass}.
             The anonymous tag is also added to the class.
-        @type attrs:
-        @param attrs:
-        @type metadata:
-        @param metadata:
+        @type attrs: A list of attributes to encode for this class.
+        @param attrs: C{list}
+        @type metadata: A list of metadata tags similar to ActionScript tags.
+        @param metadata: C{list}
 
         @raise TypeError: The C{klass} must be a class type.
-        @raise TypeError: The C{read_func} must be callable.
-        @raise TypeError: The C{write_func} must be callable.
+        @raise TypeError: The C{attr_func} must be callable.
+        @raise TypeError: C{__readamf__} must be callable.
+        @raise TypeError: C{__writeamf__} must be callable.
+        @raise AttributeError: An externalised class was specified, but no
+            C{__readamf__} attribute was found.
+        @raise AttributeError: An externalised class was specified, but no
+            C{__writeamf__} attribute was found.
+        @raise ValueError: The C{attrs} keyword must be specified for static
+            classes.
         """
         if not isinstance(klass, (type, types.ClassType)):
             raise TypeError, "klass must be a class type"
@@ -355,6 +360,7 @@ class ClassAlias(object):
         """
         Creates an instance of the klass.
 
+        @raise TypeError: Invalid class type.
         @return: Instance of C{self.klass}.
         """
         if hasattr(self.klass, '__setstate__') or hasattr(self.klass, '__getstate__'):
@@ -362,9 +368,8 @@ class ClassAlias(object):
                 return self.klass.__new__(self.klass)
             elif type(self.klass) is types.ClassType: # classic class
                 return util.make_classic_instance(self.klass)
-
             raise TypeError, 'invalid class type %r' % self.klass
-
+        
         return self.klass(*args, **kwargs)
 
     def __str__(self):
@@ -465,6 +470,9 @@ class BaseDecoder(object):
                 self.context_class.__module__, self.context_class.__name__)
 
     def readType(self):
+        """
+        Override in a subclass.
+        """
         raise NotImplementedError
 
     def readElement(self):
@@ -481,12 +489,15 @@ class BaseDecoder(object):
 
         try:
             func = getattr(self, self.type_map[type])
-        except KeyError, e:
+        except KeyError:
             raise DecodeError, "Unsupported ActionScript type 0x%02x" % type
 
         return func()
 
     def __iter__(self):
+        """
+        @raise StopIteration:
+        """
         try:
             while 1:
                 yield self.readElement()
@@ -548,6 +559,14 @@ class BaseEncoder(object):
 
         self._write_elem_func_cache = {}
 
+    def writeFunc(self, obj):
+        """
+        Not possible to encode functions.
+
+        @raise EncodeError: Unable to encode function/methods.
+        """
+        raise EncodeError("Unable to encode function/methods")
+
     def _getWriteElementFunc(self, data):
         """
         Gets a function used to encode the data.
@@ -597,7 +616,7 @@ class BaseEncoder(object):
 
     def writeElement(self, data):
         """
-        Writes the data.
+        Writes the data. Override in subclass.
 
         @type   data: C{mixed}
         @param  data: The data to be encoded to the data stream.
@@ -616,6 +635,7 @@ def register_class(klass, alias=None, attrs=None, attr_func=None, metadata=[]):
     @param attr_func:
     @type metadata:
     @param metadata:
+    @raise TypeError: PyAMF doesn't support required init arguments.
     @raise TypeError: The C{klass} is not callable.
     @raise ValueError: The C{klass} or C{alias} is already registered.
     @return: The registered L{ClassAlias}.
@@ -628,6 +648,16 @@ def register_class(klass, alias=None, attrs=None, attr_func=None, metadata=[]):
 
     if alias is not None and alias in CLASS_CACHE.keys():
         raise ValueError, "alias '%s' already registered" % alias
+
+    # Check that the constructor of the class doesn't require any additonal
+    # arguments.
+    if hasattr(klass, '__init__') and hasattr(klass.__init__, 'im_func'):
+        klass_func = klass.__init__.im_func
+        # built-in classes don't have func_code
+	# required arguments = Number of arguments - number of default values
+	if hasattr(klass_func, 'func_code') and (
+	   klass_func.func_code.co_argcount - len(klass_func.func_defaults or []) > 1):
+            raise TypeError("PyAMF doesn't support required init arguments")
 
     x = ClassAlias(klass, alias, attr_func=attr_func, attrs=attrs,
         metadata=metadata)
@@ -702,7 +732,7 @@ def get_module(mod_name):
     @param mod_name: The module name.
     @return: Module.
 
-    @raise ImportError: Unable to import empty module.
+    @raise ImportError: Unable to import an empty module.
     """
     if mod_name is '':
         raise ImportError, "Unable to import empty module"
@@ -782,11 +812,10 @@ def get_class_alias(klass):
     Finds the alias registered to the class.
 
     @type klass: C{object} or class
-    @raise UnknownClassAlias: Class not found.
-    @raise TypeError: Expecting C{string} or C{class} type.
-
     @rtype: L{ClassAlias}
     @return: The class alias linked to the C{klass}.
+    @raise UnknownClassAlias: Class not found.
+    @raise TypeError: Expecting C{string} or C{class} type.
     """
     if not isinstance(klass, (type, types.ClassType, basestring)):
         if isinstance(klass, types.InstanceType):
@@ -836,9 +865,9 @@ def decode(stream, encoding=AMF0, context=None):
 
     while 1:
         try:
-	    yield decoder.readElement()
-	except EOStream:
-	    break
+            yield decoder.readElement()
+        except EOStream:
+            break
 
 def encode(*args, **kwargs):
     """
@@ -884,11 +913,11 @@ def _get_decoder_class(encoding):
     @return: AMF0 or AMF3 decoder.
     """
     if encoding == AMF0:
-        import amf0
+        from pyamf import amf0
 
         return amf0.Decoder
     elif encoding == AMF3:
-        import amf3
+        from pyamf import amf3
 
         return amf3.Decoder
 
@@ -910,11 +939,11 @@ def _get_encoder_class(encoding):
     @return: AMF0 or AMF3 encoder.
     """
     if encoding == AMF0:
-        import amf0
+        from pyamf import amf0
 
         return amf0.Encoder
     elif encoding == AMF3:
-        import amf3
+        from pyamf import amf3
 
         return amf3.Encoder
 
@@ -928,7 +957,7 @@ def _get_context_class(encoding):
     Gets a compatible context class.
 
     @type encoding: C{int}
-    @param encoding: AMF encoding version
+    @param encoding: AMF encoding version.
     @raise ValueError: AMF encoding version is unknown.
 
     @rtype: L{amf0.Context<pyamf.amf0.Context>} or
@@ -936,11 +965,11 @@ def _get_context_class(encoding):
     @return: AMF0 or AMF3 context class.
     """
     if encoding == AMF0:
-        import amf0
+        from pyamf import amf0
 
         return amf0.Context
     elif encoding == AMF3:
-        import amf3
+        from pyamf import amf3
 
         return amf3.Context
 
@@ -989,7 +1018,7 @@ def add_type(type_, func=None):
 
     if isinstance(type_, types.TupleType):
         for x in type_:
-           _check_type(x)
+            _check_type(x)
     else:
         _check_type(type_)
 
@@ -1047,7 +1076,7 @@ def add_error_class(klass, code):
 
     mro = util.get_mro(klass)
 
-    if not Exception in util.get_mro(klass):
+    if not Exception in mro:
         raise TypeError, 'error classes must subclass the __builtin__.Exception class'
 
     if code in ERROR_CLASS_MAP.keys():

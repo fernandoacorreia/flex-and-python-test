@@ -6,8 +6,6 @@
 """
 Tests for Local Shared Object (LSO) Implementation.
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -25,8 +23,7 @@ class DecoderTestCase(unittest.TestCase):
         try:
             sol.decode(bytes)
         except:
-            raise
-            self.fail("Error decoding stream")
+            self.fail("Error occurred during decoding stream")
 
     def test_invalid_header(self):
         bytes = '\x00\x00\x00\x00\x00\x15TCSO\x00\x04\x00\x00\x00\x00\x00\x05hello\x00\x00\x00\x00'
@@ -42,7 +39,7 @@ class DecoderTestCase(unittest.TestCase):
         try:
             sol.decode(bytes, strict=False)
         except:
-            self.fail("Error occurred decoding stream")
+            self.fail("Error occurred during decoding stream")
 
     def test_invalid_signature(self):
         bytes = '\x00\xbf\x00\x00\x00\x15ABCD\x00\x04\x00\x00\x00\x00\x00\x05hello\x00\x00\x00\x00'

@@ -6,7 +6,6 @@
 """
 Django gateway tests.
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
 @since: 0.1.0
 """
 
@@ -14,9 +13,9 @@ import unittest, sys, os
 
 from django import http
 
-import pyamf
 from pyamf import remoting, util
 from pyamf.remoting.gateway import django as _django
+from pyamf.tests import util as _util
 
 class HttpRequest(http.HttpRequest):
     """
@@ -31,16 +30,20 @@ class HttpRequest(http.HttpRequest):
 
 class DjangoGatewayTestCase(unittest.TestCase):
     def setUp(self):
-        self.old_env = os.environ.copy()
-        self.mods = sys.modules.copy()
+        import new
 
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-        mod = pyamf.ASObject()
-        sys.modules['settings'] = mod
+        self.mod_name = '%s.%s' % (__name__, 'settings')
+        sys.modules[self.mod_name] = new.module(self.mod_name)
+
+        self.old_env = os.environ.get('DJANGO_SETTINGS_MODULE', None)
+
+        os.environ['DJANGO_SETTINGS_MODULE'] = self.mod_name
 
     def tearDown(self):
-        os.environ = self.old_env
-        sys.modules = self.mods
+        if self.old_env is not None:
+            os.environ['DJANGO_SETTINGS_MODULE'] = self.old_env
+
+        del sys.modules[self.mod_name]
 
     def test_request_method(self):
         gw = _django.DjangoGateway()

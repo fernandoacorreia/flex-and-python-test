@@ -9,12 +9,10 @@ servers.
 
 @see: U{Django homepage (external)<http://djangoproject.com>}
 
-@author: U{Arnar Birgisson<mailto:arnarbi@gmail.com>}
-
 @since: 0.1.0
 """
 
-django = __import__('django')
+django = __import__('django.http')
 http = django.http
 
 import pyamf
@@ -88,7 +86,7 @@ class DjangoGateway(gateway.BaseGateway):
         try:
             request = remoting.decode(http_request.raw_post_data, context)
         except pyamf.DecodeError:
-            self.logger.debug(gateway.format_exception())
+            self.logger.exception(gateway.format_exception())
             http_response.status_code = 400
 
             return http_response
@@ -101,7 +99,7 @@ class DjangoGateway(gateway.BaseGateway):
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
-            self.logger.debug(gateway.format_exception())
+            self.logger.exception(gateway.format_exception())
 
             return http.HttpResponseServerError()
 
@@ -111,13 +109,14 @@ class DjangoGateway(gateway.BaseGateway):
         try:
             stream = remoting.encode(response, context)
         except pyamf.EncodeError:
-            self.logger.debug(gateway.format_exception())
+            self.logger.exception(gateway.format_exception())
 
             return http.HttpResponseServerError('Unable to encode the response')
 
         buf = stream.getvalue()
         http_response['Content-Type'] = remoting.CONTENT_TYPE
         http_response['Content-Length'] = str(len(buf))
+        http_response['Server'] = gateway.SERVER_NAME
         http_response.write(buf)
 
         return http_response

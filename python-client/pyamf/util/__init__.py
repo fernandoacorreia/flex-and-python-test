@@ -6,10 +6,6 @@
 """
 AMF Utilities.
 
-@author: U{Arnar Birgisson<mailto:arnarbi@gmail.com>}
-@author: U{Thijs Triemstra<mailto:info@collab.nl>}
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -25,6 +21,7 @@ try:
 except ImportError:
     try:
         import cElementTree as ET
+
         ET._ElementInterface = ET.ElementTree
     except ImportError:
         import elementtree.ElementTree as ET
@@ -92,7 +89,7 @@ class StringIOProxy(object):
     def readlines(self, sizehint=0):
         """
         @type sizehint: C{int}
-        @param sizehint:
+        @param sizehint: Default is 0.
         @note: This function does not consume the buffer.
         """
         lines = self._buffer.readlines(sizehint)
@@ -344,7 +341,7 @@ class BufferedByteStream(StringIOProxy, DataTypeMixIn):
         Looks size bytes ahead in the stream, returning what it finds,
         returning the stream pointer to its initial position.
 
-        @param size:
+        @param size: Default is 1.
         @type size: C{int}
         @raise ValueError: Trying to peek backwards.
 
@@ -401,18 +398,11 @@ class BufferedByteStream(StringIOProxy, DataTypeMixIn):
 
         return new
 
-class NetworkIOMixIn(DataTypeMixIn):
-    def __init__(self, *args, **kwargs):
-        import warnings
-
-        warnings.warn('%s is deprecated and will be removed in 0.4' % \
-            type(self).__class__.__name__ , DeprecationWarning)
-
 def hexdump(data):
     """
     Get hexadecimal representation of C{StringIO} data.
 
-    @type data:
+    @type data: 
     @param data:
     @rtype: C{str}
     @return: Hexadecimal string.
@@ -444,7 +434,7 @@ def get_timestamp(d):
     Returns a UTC timestamp for a C{datetime.datetime} object.
 
     @type d: C{datetime.datetime}
-    @param d:
+    @param d: The date object.
     @return: UTC timestamp.
     @rtype: C{str}
 
@@ -489,9 +479,14 @@ def make_classic_instance(klass):
 
 def get_mro(C):
     """
-    Compute the class precedence list (mro)
+    Compute the class precedence list (mro).
+
+    @raise TypeError: class type expected.
     """
     def merge(seqs):
+        """
+        @raise NameError: Inconsistent hierarchy.
+        """
         res = []
         i = 0
 

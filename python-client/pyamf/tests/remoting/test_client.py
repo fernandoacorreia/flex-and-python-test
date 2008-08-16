@@ -4,9 +4,7 @@
 # See LICENSE for details.
 
 """
-Test for Remoting client.
-
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
+Tests for Remoting client.
 
 @since: 0.1.0
 """
@@ -37,10 +35,10 @@ class ServiceMethodProxyTestCase(unittest.TestCase):
                 tc.assertTrue(self.args, args)
 
         x = client.ServiceMethodProxy(None, None)
-        ts = TestService(x, [1,2,3])
+        ts = TestService(x, [1, 2, 3])
         x.service = ts
 
-        x(1,2,3)
+        x(1, 2, 3)
 
     def test_str(self):
         x = client.ServiceMethodProxy('spam', 'eggs')
@@ -211,12 +209,14 @@ class DummyConnection(object):
     tc = None
     expected_value = None
     expected_url = None
+    expected_headers = None
     response = None
 
-    def request(self, method, url, value):
+    def request(self, method, url, value, headers=None):
         self.tc.assertEquals(method, 'POST')
         self.tc.assertEquals(url, self.expected_url)
         self.tc.assertEquals(value, self.expected_value)
+        self.tc.assertEquals(headers, self.expected_headers)
 
     def getresponse(self):
         return self.response
@@ -370,6 +370,8 @@ class RemotingServiceTestCase(unittest.TestCase):
         gw.connection = dc
 
         dc.tc = self
+        dc.expected_headers = {'Content-Type': remoting.CONTENT_TYPE,
+                               'User-Agent': client.DEFAULT_USER_AGENT}
 
         service = gw.getService('baz', auto_execute=False)
         wrapper = service.gak()
@@ -407,6 +409,8 @@ class RemotingServiceTestCase(unittest.TestCase):
         gw.connection = dc
 
         dc.tc = self
+        dc.expected_headers = {'Content-Type': 'application/x-amf',
+                               'User-Agent': client.DEFAULT_USER_AGENT}
 
         baz = gw.getService('baz', auto_execute=False)
         spam = gw.getService('spam', auto_execute=False)

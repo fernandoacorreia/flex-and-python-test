@@ -1,13 +1,12 @@
 """
 Tools for doing dynamic imports
 
-This module has been borrowed from the Importing package
+This module has been borrowed from the Importing package.
 
-@see: http://pypi.python.org/pypi/Importing
-@see: http://peak.telecommunity.com/DevCenter/Importing
+@see: U{http://pypi.python.org/pypi/Importing}
+@see: U{http://peak.telecommunity.com/DevCenter/Importing}
 
-Original author: Phillip J. Eby <peak@eby-sarna.com>
-@author: Nick Joyce<nick@boxdesign.co.uk>
+Original author: U{Phillip J. Eby<peak@eby-sarna.com>}
 
 @since: 0.3.0
 """
@@ -280,5 +279,7 @@ def whenImported(moduleName, hook):
             whenImported(moduleName[:splitpos], sub_hook)
         elif sub_hook not in postLoadHooks[moduleName[:splitpos]]:
             whenImported(moduleName[:splitpos], sub_hook)
+        else:
+            postLoadHooks[moduleName[:splitpos]].append(sub_hook)
     else:
         return _setModuleHook(moduleName, hook)

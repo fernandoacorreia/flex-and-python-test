@@ -4,10 +4,6 @@
 """
 Test utilities.
 
-@author: U{Arnar Birgisson<mailto:arnarbi@gmail.com>}
-@author: U{Thijs Triemstra<mailto:info@collab.nl>}
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -120,3 +116,14 @@ def isNegInf(val):
         return fpconst.isNegInf(val)
     else:
         return val == float('-inf')
+
+
+def replace_dict(src, dest):
+    for name in dest.keys():
+        if name not in src:
+            del dest[name]
+
+            continue
+
+        if dest[name] is not src[name]:
+            dest[name] = src[name]

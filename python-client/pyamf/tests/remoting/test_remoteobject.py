@@ -4,7 +4,6 @@
 """
 RemoteObject Tests.
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
 @since: 0.1
 """
 
@@ -175,6 +174,29 @@ class RequestProcessorTestCase(unittest.TestCase):
         self.assertTrue(isinstance(ack, messaging.AcknowledgeMessage))
         self.assertEquals(ack.body, None)
 
+    def test_disconnect(self):
+        message = messaging.CommandMessage(operation=12)
+        rp = amf3.RequestProcessor(None)
+        request = remoting.Request('null', body=[message])
+
+        response = rp(request)
+        ack = response.body
+
+        self.assertTrue(isinstance(response, remoting.Response))
+        self.assertEquals(response.status, remoting.STATUS_OK)
+        self.assertTrue(isinstance(ack, messaging.AcknowledgeMessage))
+
+    def test_async(self):
+        message = messaging.AsyncMessage()
+        rp = amf3.RequestProcessor(None)
+        request = remoting.Request('null', body=[message])
+
+        response = rp(request)
+        ack = response.body
+
+        self.assertTrue(isinstance(response, remoting.Response))
+        self.assertEquals(response.status, remoting.STATUS_OK)
+        self.assertTrue(isinstance(ack, messaging.AcknowledgeMessage))
 
 def suite():
     suite = unittest.TestSuite()

@@ -4,8 +4,6 @@
 """
 General tests.
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -428,6 +426,23 @@ class RegisterClassTestCase(ClassCacheClearingTestCase):
         pyamf.register_class(Spam)
 
         self.assertEquals(pyamf.has_alias(Spam), True)
+
+    def test_required_arguments(self):
+        class Foo(object):
+            def __init__(self, bar, valid=1):
+                pass
+        self.assertRaises(TypeError, pyamf.register_class, Foo)
+
+        class Foo(object):
+            def __init__(self, bar, valid):
+                pass
+        self.assertRaises(TypeError, pyamf.register_class, Foo)
+
+        class Foo(object):
+            def __init__(self, bar=1, valid=1):
+                pass
+        pyamf.register_class(Foo)
+
 
 class UnregisterClassTestCase(ClassCacheClearingTestCase):
     def test_klass(self):

@@ -4,8 +4,6 @@
 """
 General gateway tests.
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -744,7 +742,7 @@ def suite():
         from google.appengine.ext import webapp
     except ImportError:
         try:
-            import dev_appserver, sys
+            import dev_appserver
 
             sys.path = dev_appserver.EXTRA_PATHS + sys.path
 

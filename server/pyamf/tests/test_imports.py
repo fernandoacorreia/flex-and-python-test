@@ -4,13 +4,13 @@
 """
 Tests pyamf.util.imports
 
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
 @since: 0.3.1
 """
 
 import unittest, sys, os.path
 
 from pyamf.util import imports
+from pyamf.tests import util as _util
 
 class JoinPathTestCase(unittest.TestCase):
     def test_empty(self):
@@ -154,14 +154,7 @@ class WhenImportedTestCase(PostLoadHookClearingTestCase):
 
         del sys.path[0]
 
-        for name in sys.modules.keys():
-            if name not in self.mods:
-                del sys.modules[name]
-
-                continue
-
-            if sys.modules[name] is not self.mods[name]:
-                sys.modules[name] = self.mods[name]
+        _util.replace_dict(self.mods, sys.modules)
 
     def _hook(self, module):
         self.executed = True
@@ -231,6 +224,21 @@ class WhenImportedTestCase(PostLoadHookClearingTestCase):
         self.assertEquals(imports.postLoadHooks['foo.bar'], None)
         self.assertEquals(imports.postLoadHooks['foo.bar.baz'], None)
         self.assertEquals(self.executed, True)
+
+    def test_multipleChildDeepParent(self):
+        self._clearModules('foo', 'foo.bar', 'foo.bar.baz', 'foo.bar.gak')
+        self._mods = []
+
+        imports.whenImported('foo.bar.baz', lambda m: self._mods.append(m))
+        imports.whenImported('foo.bar.gak', lambda m: self._mods.append(m))
+
+        import foo.bar.baz
+        import foo.bar.gak
+
+        imports._loadModule(foo.bar.baz)
+        imports._loadModule(foo.bar.gak)
+
+        self.assertEquals(self._mods, [foo.bar.baz, foo.bar.gak])
 
 class FindModuleTestCase(unittest.TestCase):
     def setUp(self):

@@ -6,10 +6,6 @@
 """
 Tests for AMF0 Implementation.
 
-@author: U{Arnar Birgisson<mailto:arnarbi@gmail.com>}
-@author: U{Thijs Triemstra<mailto:info@collab.nl>}
-@author: U{Nick Joyce<mailto:nick@boxdesign.co.uk>}
-
 @since: 0.1.0
 """
 
@@ -248,9 +244,6 @@ class EncoderTestCase(ClassCacheClearingTestCase):
                 '\x0f\x00\x00\x00\x19<a><b>hello world</b></a>'
                 '\x0f\x00\x00\x00\x19<a><b>hello world</b></a>')])
 
-    def test_unsupported(self):
-        self._run([(ord, '\x0d')])
-
     def test_object(self):
         self._run([
             ({'a': 'b'}, '\x03\x00\x01a\x02\x00\x01b\x00\x00\x09')])
@@ -426,6 +419,34 @@ class EncoderTestCase(ClassCacheClearingTestCase):
             '\x68\x65\x6c\x6c\x6f\x00\x00\x09')
         self.assertTrue(self.executed)
 
+    def test_elementtree_tag(self):
+        class NotAnElement(object):
+            items = lambda self: []
+
+            def __iter__(self):
+                return iter([])
+
+        foo = NotAnElement()
+        foo.tag = 'foo'
+        foo.text = 'bar'
+        foo.tail = None
+
+        self.encoder.writeElement(foo)
+
+        self.assertEquals(self.buf.getvalue(),
+            '\x03\x00\x04text\x02\x00\x03bar\x00\x04tail\x05\x00\x03tag\x02\x00\x03foo\x00\x00\t')
+
+    def test_funcs(self):
+        def x():
+            yield 2
+
+        self.assertRaises(pyamf.EncodeError, self.encoder.writeElement, chr)
+        self.assertRaises(pyamf.EncodeError, self.encoder.writeElement, self.assertRaises)
+        self.assertRaises(pyamf.EncodeError, self.encoder.writeElement, lambda x: x)
+        self.assertRaises(pyamf.EncodeError, self.encoder.writeElement, x())
+        self.assertRaises(pyamf.EncodeError, self.encoder.writeElement, pyamf)
+        self.assertRaises(pyamf.EncodeError, self.encoder.writeElement, ''.startswith)
+
 class DecoderTestCase(ClassCacheClearingTestCase):
     """
     Tests the output from the AMF0 L{Decoder<pyamf.amf0.Decoder>} class.
@@ -542,8 +563,6 @@ class DecoderTestCase(ClassCacheClearingTestCase):
                 '\x00\x00\t')])
 
     def test_date(self):
-        import datetime
-
         self._run([
             (datetime.datetime(2005, 3, 18, 1, 58, 31),
                 '\x0bBp+6!\x15\x80\x00\x00\x00')])
@@ -855,6 +874,7 @@ class RecordSetTestCase(unittest.TestCase):
             '@ \x00\x00\x00\x00\x00\x00\x00@"\x00\x00\x00\x00\x00\x00\x00\x07'
             'version\x00?\xf0\x00\x00\x00\x00\x00\x00\x00\ntotalCount\x00@'
             '\x08\x00\x00\x00\x00\x00\x00\x00\x00\t\x00\x00\t')
+
     def test_decode(self):
         stream = util.BufferedByteStream()
         decoder = pyamf._get_decoder_class(pyamf.AMF0)(stream)
